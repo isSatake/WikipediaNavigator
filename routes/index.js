@@ -2,12 +2,11 @@ var express = require('express');
 var router = express.Router();
 var bot = require('nodemw');
 
-var categories;
-var title;
+var keyword;
 
 /* GET home page. */
 router.get('/:word', function(req, res, next) {
-	title = req.params.word
+	keyword = req.params.word
 	var client = new bot({
 		server: 'ja.wikipedia.org',
 		path: '/w',
@@ -15,21 +14,33 @@ router.get('/:word', function(req, res, next) {
 	}),
 	params = {
 		action: 'query',
-		prop: 'categories',
-		titles: title
+		list: 'search',
+		srsearch: keyword,
+		srprop: 'snippet',
+		srlimit: 100
 	};
 	client.api.call(params, function(err, info, next, data){
-		for(var id in info.pages){
-			//		for(var index in info.pages[id].categories){
-			//			console.log(info.pages[id].categories[index].title);
-			//<li>をjadeに吐き出す
-			//		}
-			categories = info.pages[id].categories;
-		}
+		var s = info.search;
+		var resultList = [];
+		for(var index in info.search){
+			if(s[index].title.indexOf('曲') != -1 || s[index].title.indexOf('歌') != -1){
+				console.log(s[index].title + "is 曲");
+				console.log(s[index].snippet);
+				resultList.push(s[index].title);
+				continue;
+				//これは曲ページだからresultListにappend
+			}
+			if(s[index].snippet.indexOf('曲') != -1 || s[index].snippet.indexOf('歌') != -1){
+				console.log(s[index].title + "is 曲");
+				console.log(s[index].snippet);
+				resultList.push(s[index].title);
+				//これは曲ページだからresultListにappend
+			}
+		};
 		res.render('index', {
 			title: 'Express',
-			musicTitle: title,
-			categoriesList: categories
+			searchWord: keyword,
+			result: resultList
 		});
 	});
 });
