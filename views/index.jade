@@ -1,0 +1,11 @@
+extends layout
+
+block content
+	form(method="POST", target="./")
+		input(type="text", name="query" value="君が代")
+		input(type="hidden", name="mode" value="input")
+		input(type="submit", value="search")
+	p= musicTitle 
+	ul
+		each c in categoriesList
+			li= c.title
