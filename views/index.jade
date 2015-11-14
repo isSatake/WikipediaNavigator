@@ -1,7 +1,10 @@
 extends layout
 
 block content
-	p= musicTitle 
-	ul
-		each c in categoriesList
+	p#musicTitle= musicTitle 
+	ul#categories
+		each c in categoryList
 			li= c.title
+	ul#musics
+//		each m in musicList
+//			li= m
