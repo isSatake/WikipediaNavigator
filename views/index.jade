@@ -1,10 +1,14 @@
 extends layout
 
 block content
-	p#musicTitle= musicTitle 
-	ul#categories
-		each c in categoryList
-			li= c.title
-	ul#musics
-//		each m in musicList
-//			li= m
+  p#musicTitle= musicTitle 
+//  ul.categories
+//    each c in categoryList
+//      li.category= c.title
+//  ul.musics
+//    each m in musicList
+//      li.music= m
+
+block scripts
+  script(src='http://code.jquery.com/jquery-2.0.0.min.js')
+  script(src='javascripts/request.js')
