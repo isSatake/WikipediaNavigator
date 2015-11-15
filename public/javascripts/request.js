@@ -1,15 +1,10 @@
 $(function(){
-  getCategoryList('君が代');
-  getCategoryMembers(encodeURIComponent('Category:1880年代の音楽'));
+  //最初の1曲目
+  getCategoryList($('#musicTitle').text());
 
-  $('ul').on('click', 'li', function(){
-    var clicked = $(this);
-    if(clicked.attr('class') == 'music'){
-      getCategoryList(clicked.text());
-    }
-    if(clicked.attr('class') == 'category'){
-      getCategoryMembers(encodeURIComponent(clicked.text()));
-    }
+  //delegate
+  $('body').on('click', 'li', function(){
+    explore($(this));
   });
 });
 
@@ -31,4 +26,14 @@ function getCategoryMembers(categoryTitle){
       $('ul.musics:last').append('<li class="music">' + music.title + '</li>');
     });
   });
+}
+
+function explore(element){
+  var selected = element;
+  if(selected.attr('class') == 'music'){
+    getCategoryList(encodeURIComponent(selected.text()));
+  }
+  if(selected.attr('class') == 'category'){
+    getCategoryMembers(encodeURIComponent(selected.text()));
+  }
 }
