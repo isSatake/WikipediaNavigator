@@ -6,3 +6,13 @@ body {
 a {
   color: #00B7FF;
 }
+
+ul {
+  float: left;
+  list-style: none;
+  padding: 0 0 0 30px;
+}
+
+#musicTitle {
+  float: left;
+}
