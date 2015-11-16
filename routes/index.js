@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var bot = require('nodemw');
+var google = require('googleapis');
+var YOUTUBE_API_KEY = "--YOUR_API_KEY";
+var youtube = google.youtube('v3');
 
 //カテゴリ抽出クエリ
 var params_list_categories = {
@@ -55,10 +58,9 @@ function search_by_category(params){
 
 //root
 router.get('/:word', function(req, res, next) {
-  musicTitle = req.params.word;
-    res.render('index', {
-      musicTitle: musicTitle
-    });
+  res.render('index', {
+    musicTitle: req.params.word
+  });
 });
 
 //カテゴリリスト取得API
@@ -76,5 +78,17 @@ router.get('/categorymember/:word', function(req, res){
     res.send(value_list_categories);
   });
 });
+
+//youtube取得API
+router.get('/getmusic/:word', function(req, res){
+  youtube.search.list({
+    part:'snippet',
+    q: req.params.word,
+    key: 'AIzaSyBM5VAZ5s55MG16GrbY4NC0fAlC6eYp0hY'
+  }, function(error, response){
+    res.send(response.items[0].id.videoId);
+  });
+});
+
 
 module.exports = router;

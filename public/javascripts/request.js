@@ -8,6 +8,31 @@ $(function(){
   });
 });
 
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var player;
+
+function onYouTubeIframeAPIReady() {
+    var src = $('#youtube').attr('src');
+    console.log(src);
+    $('#youtube').attr('src','&amp;wmode=transparent');
+  player = new YT.Player(
+    'youtube',
+    {
+      width: 320,
+      height: 240,
+      videoId: '',
+      playerVars: {
+        rel: 0,
+        autoplay: 1
+      }
+    }
+  );
+}
+
 function getCategoryList(musicTitle){
   var title = ''
   $('body').append('<ul class="categories"></ul>');
@@ -28,9 +53,18 @@ function getCategoryMembers(categoryTitle){
   });
 }
 
+function playMusic(musicTitle){
+  $.get('getmusic/' + musicTitle, function(result){
+    console.log(player);
+    player.loadVideoById(result);
+    console.log(result);
+  });
+}
+
 function explore(element){
   var selected = element;
   if(selected.attr('class') == 'music'){
+    playMusic(selected.text());
     getCategoryList(encodeURIComponent(selected.text()));
   }
   if(selected.attr('class') == 'category'){
