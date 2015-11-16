@@ -1,16 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var bot = require('nodemw');
-
-var musicTitle; //検索用の曲
-var categoryList; //検索曲ページが含むカテゴリのリストObject
-var musicList = []; //選択カテゴリのメンバ内楽曲ページArray
+var google = require('googleapis');
+var YOUTUBE_API_KEY = "--YOUR_API_KEY";
+var youtube = google.youtube('v3');
 
 //カテゴリ抽出クエリ
 var params_list_categories = {
   action: 'query',
   prop: 'categories',
-  titles: musicTitle
+  titles: 'title'
 };
 
 var bot_list_categories = new bot({
@@ -46,47 +45,50 @@ var bot_search_by_category = new bot({
   debug: true
 });
 
-function search_by_category(params, array){
+function search_by_category(params){
   return new Promise(function(resolve, reject){
     bot_search_by_category.api.call(params_search_by_category, function(err, info, next, data){
-      if(info.categorymembers.length = 0){
+      if(info.categorymembers.length == 0){
         return true;
       }
-      var c = info.categorymembers;
-      for(var index in c){
-        array.push(c[index].title);
-      }
-      resolve();
+      resolve(info.categorymembers);
     });
   });
 }
 
-/* GET home page. */
+//root
 router.get('/:word', function(req, res, next) {
-  musicTitle = req.params.word;
-  params_list_categories.titles = musicTitle;
-
-  list_categories(params_list_categories).then(function onFulfilled(value_list_categories){
-    res.render('index', {
-      musicTitle: musicTitle,
-      categoryList: value_list_categories
-    });
-
-    for(var index in value_list_categories){
-      params_search_by_category.cmtitle = value_list_categories[index].title
-      search_by_category(params_search_by_category, musicList).then(function onFulfilled(){
-      }).catch(function onRejected(error){
-        console.log("search_by_category_error");
-      });
-    }
-//    res.render('index', {
-//      musicList: musicList
-//    });
-
-  }).catch(function onRejected(error){
-    console.log("list_categories_error");
+  res.render('index', {
+    musicTitle: req.params.word
   });
-
 });
+
+//カテゴリリスト取得API
+router.get('/categorylist/:word', function(req, res){
+  params_list_categories.titles = req.params.word;
+  list_categories(params_list_categories).then(function onFulfilled(value_list_categories){
+    res.send(value_list_categories);
+  });
+});
+
+//カテゴリメンバ取得API
+router.get('/categorymember/:word', function(req, res){
+  params_search_by_category.cmtitle = req.params.word;
+  search_by_category(params_search_by_category).then(function onFulfilled(value_list_categories){
+    res.send(value_list_categories);
+  });
+});
+
+//youtube取得API
+router.get('/getmusic/:word', function(req, res){
+  youtube.search.list({
+    part:'snippet',
+    q: req.params.word,
+    key: 'AIzaSyBM5VAZ5s55MG16GrbY4NC0fAlC6eYp0hY'
+  }, function(error, response){
+    res.send(response.items[0].id.videoId);
+  });
+});
+
 
 module.exports = router;
