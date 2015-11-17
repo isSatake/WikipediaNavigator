@@ -75,6 +75,12 @@ router.get('/categorylist/:word', function(req, res){
 router.get('/categorymember/:word', function(req, res){
   params_search_by_category.cmtitle = req.params.word;
   search_by_category(params_search_by_category).then(function onFulfilled(value_list_categories){
+    for(index in value_list_categories){
+      //カテゴリが含まれていたら削除
+      if(value_list_categories[index].title.indexOf('Category:') == 0){
+        value_list_categories.splice(index, 1);
+      }
+    }
     res.send(value_list_categories);
   });
 });
