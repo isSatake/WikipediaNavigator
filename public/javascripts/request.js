@@ -17,7 +17,6 @@ var player;
 
 function onYouTubeIframeAPIReady() {
     var src = $('#youtube').attr('src');
-    console.log(src);
     $('#youtube').attr('src','&amp;wmode=transparent');
   player = new YT.Player(
     'youtube',
@@ -55,16 +54,14 @@ function getCategoryMembers(categoryTitle){
 
 function playMusic(musicTitle){
   $.get('getmusic/' + musicTitle, function(result){
-    console.log(player);
     player.loadVideoById(result);
-    console.log(result);
   });
 }
 
 function explore(element){
   var selected = element;
   if(selected.attr('class') == 'music'){
-    playMusic(selected.text());
+    playMusic(encodeURIComponent(selected.text()));
     getCategoryList(encodeURIComponent(selected.text()));
   }
   if(selected.attr('class') == 'category'){
