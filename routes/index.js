@@ -48,10 +48,11 @@ var bot_search_by_category = new bot({
 function search_by_category(params){
   return new Promise(function(resolve, reject){
     bot_search_by_category.api.call(params_search_by_category, function(err, info, next, data){
-      if(info.categorymembers.length == 0){
-        return true;
+      try{
+        resolve(info.categorymembers);
+      }catch(e){
+        resolve();
       }
-      resolve(info.categorymembers);
     });
   });
 }
@@ -103,7 +104,11 @@ router.get('/getmusic/:word', function(req, res){
     q: req.params.word,
     key: 'AIzaSyBM5VAZ5s55MG16GrbY4NC0fAlC6eYp0hY'
   }, function(error, response){
-    res.send(response.items[0].id.videoId);
+    try{
+      res.send(response.items[0].id.videoId);
+    }catch(e){
+      res.send();
+    }
   });
 });
 
