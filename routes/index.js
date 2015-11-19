@@ -5,6 +5,14 @@ var google = require('googleapis');
 var YOUTUBE_API_KEY = "--YOUR_API_KEY";
 var youtube = google.youtube('v3');
 var _ = require('underscore');
+var MongoClient = require('mongodb').MongoClient;
+
+// database
+db = null;
+MongoClient.connect('mongodb://localhost:27017/tuneturn', function(err,_db){
+  if(err != null){ throw err };
+  db = _db;
+});
 
 //カテゴリ抽出クエリ
 var params_list_categories = {
@@ -55,7 +63,7 @@ var bot_search_by_category = new bot({
 
 function search_by_category(params){
   return new Promise(function(resolve, reject){
-    bot_search_by_category.api.call(params_search_by_category, function(err, info, next, data){
+    bot_search_by_category.api.call(params, function(err, info, next, data){
       try{
         resolve(info.categorymembers.map(function(member){
           var v = member.title
@@ -77,10 +85,14 @@ function member_by_member(word){
     var list_params = _.extend(params_list_categories, { titles: word });
     list_categories(list_params).then(function onFullfilled(categories){
       Promise.all(categories.map(function(category){
-        var search_params = _.extend(params_search_by_category, { cmtitle: category });
+        var search_params = _.clone(_.extend(params_search_by_category, { cmtitle: category }));
         return search_by_category(search_params);
       })).then(function onFullfilled(members){
-        resolve(members);
+        var result = {};
+        categories.forEach(function(category, index){
+          return result[category] = members[index];
+        });
+        resolve(result);
       });
     });
   });
@@ -88,31 +100,33 @@ function member_by_member(word){
 
 //root
 router.get('/:word', function(req, res, next) {
-  res.render('index', {
-    musicTitle: req.params.word
-  });
+  res.render('index');
 });
 
 //カテゴリリスト取得API
 router.get('/categorylist/:word', function(req, res){
-  params_list_categories.titles = req.params.word;
-  list_categories(params_list_categories).then(function onFulfilled(value_list_categories){
+  list_categories(_.clone(_.extend(params_list_categories, {titles: req.params.word}))).then(function onFulfilled(value_list_categories){
     res.send(value_list_categories);
   });
 });
 
 //カテゴリメンバ取得API
 router.get('/categorymember/:word', function(req, res){
-  params_search_by_category.cmtitle = req.params.word;
-  search_by_category(params_search_by_category).then(function onFulfilled(value_members){
+  search_by_category(_.clone(_.extend(params_search_by_category, {cmtitle: req.params.word}))).then(function onFulfilled(value_members){
     res.send(value_members);
   });
 });
 
 // メンバからメンバ
 router.get('/memberbymember/:word', function(req, res){
-  member_by_member(req.params.word).then(function onFullfilled(results){
-    res.json(results);
+  db.collection('member_by_member').findOne({ word: req.params.word } , function(err, doc){
+    if(err != null) { return res.send(err); };
+    if(doc != null){ return res.send(doc.results); };
+
+    member_by_member(req.params.word).then(function onFullfilled(results){
+      db.collection('member_by_member').insert({ word: req.params.word, results: results});
+      res.json(results);
+    });
   });
 });
 

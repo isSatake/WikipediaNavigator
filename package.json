@@ -12,6 +12,7 @@
     "express": "~4.13.1",
     "googleapis": "^2.1.6",
     "jade": "~1.11.0",
+    "mongodb": "^2.0.48",
     "morgan": "~1.6.1",
     "nodemw": "~0.7.5",
     "request": "^2.65.0",
