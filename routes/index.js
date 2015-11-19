@@ -88,9 +88,9 @@ function member_by_member(word){
         var search_params = _.clone(_.extend(params_search_by_category, { cmtitle: category }));
         return search_by_category(search_params);
       })).then(function onFullfilled(members){
-        var result = {};
+        var result = [];
         categories.forEach(function(category, index){
-          return result[category] = members[index];
+          return result.push([category, members[index]]);
         });
         resolve(result);
       });
