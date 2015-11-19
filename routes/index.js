@@ -4,6 +4,7 @@ var bot = require('nodemw');
 var google = require('googleapis');
 var YOUTUBE_API_KEY = "--YOUR_API_KEY";
 var youtube = google.youtube('v3');
+var _ = require('underscore');
 
 //カテゴリ抽出クエリ
 var params_list_categories = {
@@ -19,13 +20,20 @@ var bot_list_categories = new bot({
 });
 
 function list_categories(params){
-  var list;
   return new Promise(function(resolve, reject){
     bot_list_categories.api.call(params, function(err, info, next, data){
-      for(var id in info.pages){
-        list = info.pages[id].categories;
-      }
-      resolve(list);
+      categories = Object.keys(info.pages).map(function(id){
+        return info.pages[id].categories.map(function(category){
+          var v = category.title
+          //ゴミ削除
+          if(v.indexOf('出展を必要とする') >= 0 || v.indexOf('スタブ') >= 0 || v.indexOf('参照エラー') >= 0 ||
+           v.indexOf('参照方法') >= 0 || v.indexOf('外部リンク') >= 0 || v.indexOf('中立的観点') >= 0){
+            return null;
+          }
+          return v;
+        }).filter(function(title){ return title !== null });
+      });
+      resolve(_.flatten(categories));
     });
   });
 }
@@ -49,10 +57,31 @@ function search_by_category(params){
   return new Promise(function(resolve, reject){
     bot_search_by_category.api.call(params_search_by_category, function(err, info, next, data){
       try{
-        resolve(info.categorymembers);
+        resolve(info.categorymembers.map(function(member){
+          var v = member.title
+          //ゴミ削除
+          if(v.indexOf('Category') >= 0 || v.indexOf('Template') >= 0 || v.indexOf('一覧') >= 0){
+            return null;
+          }
+          return v;
+        }).filter(function(member){ return member !== null }));
       }catch(e){
         resolve();
       }
+    });
+  });
+}
+
+function member_by_member(word){
+  return new Promise(function(resolve, reject){
+    var list_params = _.extend(params_list_categories, { titles: word });
+    list_categories(list_params).then(function onFullfilled(categories){
+      Promise.all(categories.map(function(category){
+        var search_params = _.extend(params_search_by_category, { cmtitle: category });
+        return search_by_category(search_params);
+      })).then(function onFullfilled(members){
+        resolve(members);
+      });
     });
   });
 }
@@ -68,15 +97,6 @@ router.get('/:word', function(req, res, next) {
 router.get('/categorylist/:word', function(req, res){
   params_list_categories.titles = req.params.word;
   list_categories(params_list_categories).then(function onFulfilled(value_list_categories){
-    var v = ''
-    for(index in value_list_categories){
-      v = value_list_categories[index].title
-      //ゴミ削除
-      if(v.indexOf('出展を必要とする') >= 0 || v.indexOf('スタブ') >= 0 || v.indexOf('参照エラー') >= 0 ||
-         v.indexOf('参照方法') >= 0 || v.indexOf('外部リンク') >= 0 || v.indexOf('中立的観点') >= 0){
-        value_list_categories.splice(index, 1);
-      }
-    }
     res.send(value_list_categories);
   });
 });
@@ -85,15 +105,14 @@ router.get('/categorylist/:word', function(req, res){
 router.get('/categorymember/:word', function(req, res){
   params_search_by_category.cmtitle = req.params.word;
   search_by_category(params_search_by_category).then(function onFulfilled(value_members){
-    var v = ''
-    for(index in value_members){
-      v = value_members[index].title
-      //ゴミ削除 
-      if(v.indexOf('Category') >= 0 || v.indexOf('Template') >= 0 || v.indexOf('一覧') >= 0){
-        value_members.splice(index, 1);
-      }
-    }
     res.send(value_members);
+  });
+});
+
+// メンバからメンバ
+router.get('/memberbymember/:word', function(req, res){
+  member_by_member(req.params.word).then(function onFullfilled(results){
+    res.json(results);
   });
 });
 
