@@ -11,17 +11,23 @@ module.exports = Shelf = React.createClass
     else
       padding: 10
 
-  entryStyle: (index)->
+  entryStyle: (index, entry)->
     if @props.hIndex is index and @props.isActive
       background: 'darkseagreen'
       fontWeight: 'bold'
+      height: 40
+    else if @props.query is entry
+      background: 'wheat'
+      height: 40
+    else
+      height: 40
 
 
   render: ->
     if @props.entries.length > 0
       <div style={@shelfStyle()} >
           {@props.entries.map (entry, index)=>
-            <p style={@entryStyle(index)}>{entry}</p>
+            <p style={@entryStyle(index, entry)}>{entry}</p>
           }
       </div>
     else

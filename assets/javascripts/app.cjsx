@@ -75,7 +75,7 @@ App = React.createClass
     setTimeout =>
       @openQuery()
       @nowWaiting = false
-    , 1500 # 1.5 sec
+    , 1000 # 1.5 sec
 
   ### Network ###
   updateQuery: (query)->
@@ -95,6 +95,11 @@ App = React.createClass
           result.push @currentEntries()
         return if index >= COLUMNS_SIZE
         return if label is @currentCategory()
+
+        existIndex = res.body[index][1].indexOf(@state.query)
+        if existIndex isnt -1
+          res.body[index][1].splice(existIndex, 1)
+        res.body[index][1].splice(@state.hIndex, 0, @state.query)
         result.push res.body[index]
       # if result cluster length is short
       if res.body.length <= @state.vIndex
@@ -122,11 +127,15 @@ App = React.createClass
 
         {@state.entryClusters.map (cluster, index)=>
           <div className="col-xs-2">
-            <h5>{cluster[0].replace('Category:','')}</h5>
+            <h5 style={
+              height: 30
+              textDecoration: 'underline'
+            }>{cluster[0].replace('Category:','')}</h5>
             <Shelf
               entries={cluster[1]}
               isActive={@state.vIndex is index}
               hIndex={@state.hIndex}
+              query={@state.query}
             />
           </div>
         }
