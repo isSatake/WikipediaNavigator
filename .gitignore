@@ -21,6 +21,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+public/javascripts/*
 
 ### https://raw.github.com/github/gitignore/master/node.gitignore
 

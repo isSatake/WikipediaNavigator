@@ -16,11 +16,6 @@ ul {
 li:hover {
   font-weight: bold;
 }
-
-#musicTitle {
-  float: left;
-}
-
 #youtube {
   position: fixed;
   bottom: 0px;
