@@ -34,7 +34,7 @@ function list_categories(params){
         return info.pages[id].categories.map(function(category){
           var v = category.title
           //ゴミ削除
-          if(v.indexOf('出展を必要とする') >= 0 || v.indexOf('スタブ') >= 0 || v.indexOf('参照エラー') >= 0 ||
+          if(v.indexOf('ウィキデータ') >= 0 || v.indexOf('出展を必要とする') >= 0 || v.indexOf('スタブ') >= 0 || v.indexOf('参照エラー') >= 0 ||
            v.indexOf('参照方法') >= 0 || v.indexOf('外部リンク') >= 0 || v.indexOf('中立的観点') >= 0){
             return null;
           }

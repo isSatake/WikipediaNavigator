@@ -111,6 +111,7 @@ App = React.createClass
   # find query and open youtube
   openQuery: (query)->
     query ||= @currentEntries()[1][@state.hIndex]
+    return if query is @state.query
     @updateQuery(query)
     request "/getmusic/#{query}"
     .end (err, res)=>
