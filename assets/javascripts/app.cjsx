@@ -23,6 +23,16 @@ App = React.createClass
   ### Interface ###
   componentDidMount: ->
     @updateQuery decodeURI(location.pathname.replace('/',''))
+
+    # popstate
+    ReactDOM
+    .findDOMNode(@)
+    .offsetParent
+    .addEventListener 'popstate', (query)=>
+      console.log "popstate #{query}"
+      @openQuery(query)
+
+    # keyboard
     ReactDOM
     .findDOMNode(@)
     .offsetParent
@@ -36,7 +46,7 @@ App = React.createClass
             hIndex: @state.hIndex-1
           @waitForSelect()
         when 40 # down
-          return if @state.hIndex >= @currentEntries().length
+          return if @state.hIndex >= @currentEntries()[1].length
           @setState
             hIndex: @state.hIndex+1
           @waitForSelect()
@@ -46,7 +56,7 @@ App = React.createClass
             vIndex: @state.vIndex-1
           @waitForSelect()
         when 39 # right
-          return if @state.vIndex >= @state.entryClusters.length
+          return if @state.vIndex >= @state.entryClusters.length-1
           @setState
             vIndex: @state.vIndex+1
           @waitForSelect()
@@ -65,13 +75,14 @@ App = React.createClass
     setTimeout =>
       @openQuery()
       @nowWaiting = false
-    , 1000 * 1 # 1 sec
+    , 1500 # 1.5 sec
 
   ### Network ###
   updateQuery: (query)->
     return if _.isEmpty query
     return if query is @state.query
-    @setState query: query
+    @setState query: query, ->
+      history.pushState query, null, "/#{query}"
     request "/memberbymember/#{query}"
     .end (err, res)=>
       return throw err if err
@@ -85,12 +96,18 @@ App = React.createClass
         return if index >= COLUMNS_SIZE
         return if label is @currentCategory()
         result.push res.body[index]
+      # if result cluster length is short
+      if res.body.length <= @state.vIndex
+        result.push @currentEntries()
+        @setState vIndex: result.length-1
+
       @setState entryClusters: result
 
   # find query and open youtube
-  openQuery: ->
-    @updateQuery(@currentEntries()[1][@state.hIndex])
-    request "/getmusic/#{@state.query}"
+  openQuery: (query)->
+    query ||= @currentEntries()[1][@state.hIndex]
+    @updateQuery(query)
+    request "/getmusic/#{query}"
     .end (err, res)=>
       @setState
         youtubeUrl: "http://www.youtube.com/watch?v=#{res.text}"
@@ -99,11 +116,13 @@ App = React.createClass
   render: ->
     <div className="container-fluid">
       <div className="row">
-        <p>start with {@state.query}</p>
+        <h4>{@state.query} &nbsp;
+          <small> youtube: {@state.youtubeUrl}</small>
+        </h4>
 
         {@state.entryClusters.map (cluster, index)=>
           <div className="col-xs-2">
-            <h5>{cluster[0]}</h5>
+            <h5>{cluster[0].replace('Category:','')}</h5>
             <Shelf
               entries={cluster[1]}
               isActive={@state.vIndex is index}
@@ -116,11 +135,13 @@ App = React.createClass
         <YouTube
           url={@state.youtubeUrl}
           opts={
-            height: 240
-            width: 320
+            height: 90
+            width: 160
             playerVars:
               autoplay: 1
           }
+          onReady={(e)-> e.target.playVideo() }
+          onError={(e)-> console.error e }
         />
       </div>
 

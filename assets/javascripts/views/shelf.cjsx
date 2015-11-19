@@ -6,13 +6,16 @@ module.exports = Shelf = React.createClass
 
   shelfStyle: ->
     if @props.isActive
-      background: 'gray'
+      background: 'wheat'
+      padding: 10
     else
-      {}
+      padding: 10
 
   entryStyle: (index)->
     if @props.hIndex is index and @props.isActive
-      background: 'yellow'
+      background: 'darkseagreen'
+      fontWeight: 'bold'
+
 
   render: ->
     if @props.entries.length > 0
