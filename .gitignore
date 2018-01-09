@@ -21,7 +21,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-public/javascripts/*
+public/main.js
 
 ### https://raw.github.com/github/gitignore/master/node.gitignore
 
@@ -53,5 +53,3 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
-
-

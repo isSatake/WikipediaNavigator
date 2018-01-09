@@ -164,7 +164,7 @@ class App extends Component {
     if(col.length > 0){
       iframe = (
         <iframe
-          src={`https://ja.wikipedia.org/wiki/${this.state.query}`}
+          src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
           width="100%"
           height="100%" />
       )
