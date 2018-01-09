@@ -34,8 +34,18 @@ function list_categories(params){
         return info.pages[id].categories.map(function(category){
           var v = category.title
           //ゴミ削除
-          if(v.indexOf('ウィキデータ') >= 0 || v.indexOf('出展を必要とする') >= 0 || v.indexOf('スタブ') >= 0 || v.indexOf('参照エラー') >= 0 ||
-           v.indexOf('参照方法') >= 0 || v.indexOf('外部リンク') >= 0 || v.indexOf('中立的観点') >= 0){
+          if(v.indexOf('ウィキデータ') >= 0 ||
+              v.indexOf('スタブ') >= 0 ||
+              v.indexOf('参照') >= 0 ||
+              v.indexOf('外部リンク') >= 0 ||
+              v.indexOf('中立的観点') >= 0 ||
+              v.indexOf('Template') >= 0 ||
+              v.indexOf('一覧') >= 0 ||
+              v.indexOf('識別子') >= 0 ||
+              v.indexOf('出典') >= 0 ||
+              v.indexOf('書きかけ') >= 0 ||
+              v.indexOf('ISBN') >= 0 ||
+              v.indexOf('Webarchive') >= 0){
             return null;
           }
           return v;
@@ -67,9 +77,13 @@ function search_by_category(params){
       try{
         resolve(info.categorymembers.map(function(member){
           var v = member.title
-          //ゴミ削除
-          if(v.indexOf('Category') >= 0 || v.indexOf('Template') >= 0 || v.indexOf('一覧') >= 0 || v.indexOf('ISBN') >= 0){
-            return null;
+          //ゴミエントリ削除
+          if(v.indexOf("Wikipedia:") >= 0 ||
+              v.indexOf("利用者") >= 0 ||
+              v.indexOf("プロジェクト") >= 0 ||
+              v.indexOf("Category:") >= 0 ||
+              v.indexOf("Template:") >= 0){
+            return null
           }
           return v;
         }).filter(function(member){ return member !== null }));
@@ -90,11 +104,6 @@ function member_by_member(word){
       })).then(function onFullfilled(members){
         var result = [];
         categories.forEach(function(category, cindex){
-          members[cindex].forEach((entry, index) => {
-            if(entry.indexOf("Wikipedia:") >= 0){
-              members[cindex].splice(index, 1)
-            }
-          })
           return result.push([category, members[cindex]]);
         });
         resolve(result);

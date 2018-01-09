@@ -23,15 +23,26 @@ export default class Shelf extends Component {
       return {
         background: "darkseagreen",
         fontWeight: "bold",
+        // textOverflow: "ellipsis",
+        overflow: "hidden",
+        width: "100%",
         height: 40
       }
     }else if(this.props.query === entry){
       return {
         background: "wheat",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        width: "100%",
         height: 40
       }
     }else{
       return {
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        width: "100%",
         height: 40
       }
     }
