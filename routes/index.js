@@ -5,14 +5,14 @@ var google = require('googleapis');
 var YOUTUBE_API_KEY = "--YOUR_API_KEY";
 var youtube = google.youtube('v3');
 var _ = require('underscore');
-var MongoClient = require('mongodb').MongoClient;
+// var MongoClient = require('mongodb').MongoClient;
 
 // database
-db = null;
-MongoClient.connect('mongodb://localhost:27017/tuneturn', function(err,_db){
-  if(err != null){ throw err };
-  db = _db;
-});
+// db = null;
+// MongoClient.connect('mongodb://localhost:27017/tuneturn', function(err,_db){
+//   if(err != null){ throw err };
+//   db = _db;
+// });
 
 //カテゴリ抽出クエリ
 var params_list_categories = {
@@ -52,7 +52,7 @@ var params_search_by_category = {
   list: 'categorymembers',
   cmtitle: '',
   cmprop: 'title',
-  cmlimit: 100
+  cmlimit: 20
 };
 
 var bot_search_by_category = new bot({
@@ -68,7 +68,7 @@ function search_by_category(params){
         resolve(info.categorymembers.map(function(member){
           var v = member.title
           //ゴミ削除
-          if(v.indexOf('Category') >= 0 || v.indexOf('Template') >= 0 || v.indexOf('一覧') >= 0){
+          if(v.indexOf('Category') >= 0 || v.indexOf('Template') >= 0 || v.indexOf('一覧') >= 0 || v.indexOf('ISBN') >= 0){
             return null;
           }
           return v;
@@ -89,8 +89,13 @@ function member_by_member(word){
         return search_by_category(search_params);
       })).then(function onFullfilled(members){
         var result = [];
-        categories.forEach(function(category, index){
-          return result.push([category, members[index]]);
+        categories.forEach(function(category, cindex){
+          members[cindex].forEach((entry, index) => {
+            if(entry.indexOf("Wikipedia:") >= 0){
+              members[cindex].splice(index, 1)
+            }
+          })
+          return result.push([category, members[cindex]]);
         });
         resolve(result);
       });
@@ -100,7 +105,7 @@ function member_by_member(word){
 
 //root
 router.get('/:word', function(req, res, next) {
-  res.render('index');
+  res.sendfile('./public/index.html');
 });
 
 //カテゴリリスト取得API
@@ -119,30 +124,15 @@ router.get('/categorymember/:word', function(req, res){
 
 // メンバからメンバ
 router.get('/memberbymember/:word', function(req, res){
-  db.collection('member_by_member').findOne({ word: req.params.word } , function(err, doc){
-    if(err != null) { return res.send(err); };
-    if(doc != null){ return res.send(doc.results); };
+  // db.collection('member_by_member').findOne({ word: req.params.word } , function(err, doc){
+  //   if(err != null) { return res.send(err); };
+  //   if(doc != null){ return res.send(doc.results); };
 
     member_by_member(req.params.word).then(function onFullfilled(results){
-      db.collection('member_by_member').insert({ word: req.params.word, results: results});
+      // db.collection('member_by_member').insert({ word: req.params.word, results: results});
       res.json(results);
     });
-  });
-});
-
-//youtube取得API
-router.get('/getmusic/:word', function(req, res){
-  youtube.search.list({
-    part:'snippet',
-    q: req.params.word,
-    key: 'AIzaSyBM5VAZ5s55MG16GrbY4NC0fAlC6eYp0hY'
-  }, function(error, response){
-    try{
-      res.send(response.items[0].id.videoId);
-    }catch(e){
-      res.send();
-    }
-  });
+  // });
 });
 
 
