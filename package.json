@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "npm run build",
     "start": "node app.js",
     "start:dev": "node-dev app.js",
     "start:all": "run-p start:dev watch",
