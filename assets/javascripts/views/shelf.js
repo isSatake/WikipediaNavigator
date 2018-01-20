@@ -1,8 +1,10 @@
 import React, { Component } from "react"
+import Entry from "./Entry"
 
 export default class Shelf extends Component {
   constructor(props){
     super(props)
+    console.log('Shelf constructed')
   }
 
   shelfStyle() {
@@ -18,52 +20,61 @@ export default class Shelf extends Component {
     }
   }
 
-  entryStyle(index, entry) {
-    if(this.props.hIndex == index && this.props.isActive){
-      return {
-        background: "darkseagreen",
-        fontWeight: "bold",
-        // textOverflow: "ellipsis",
-        overflow: "hidden",
-        width: "100%",
-        height: 40
+  getElements() {
+    // const index = this.props.index//this.props.entries.indexOf(this.props.query)
+    const offset = (this.props.rowSize - 1) / 2
+    const elements = []
+
+    for(let i = 0; i < this.props.rowSize; i++){
+      const index = this.props.index - offset + i
+      if(index < 0 || index >= this.props.entries.length){
+        // continue
+        elements.push(
+          <Entry empty={true} />
+        )
+        continue
       }
-    }else if(this.props.query === entry){
-      return {
-        background: "wheat",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        width: "100%",
-        height: 40
-      }
-    }else{
-      return {
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        width: "100%",
-        height: 40
-      }
+      elements.push(
+        <Entry
+          debugindex={index}
+          key={`entry-${i}`}
+          title={this.props.entries[index]}
+          isFocus={i == offset}
+        />
+      )
     }
+    console.log('entries prepared')
+    // console.log(elements)
+
+    return elements
   }
 
   render() {
-    if(this.props.entries.length > 0){
-      const entry = this.props.entries
-      let entries = []
-      for(let index in entry){
-        entries.push(<p style={this.entryStyle(index, entry[index])}>{entry[index]}</p>)
-      }
-      return (
-        <div style={this.shelfStyle()}>
-          {entries}
+    console.log("render")
+
+    if(this.props.empty){
+      return(
+        <div
+          className="col-xs-2 emptyshelf"
+          style={{height: "80%"}}>
         </div>
       )
-    }else{
-      return (
-        <p>候補なし</p>
-      )
     }
+
+    return (
+      <div
+        className="col-xs-2 shelf"
+        style={{height: "80%"}}>
+        <h5 style={{
+          height: 30,
+          textDecoration: "underline"
+        }}>
+          {this.props.debugindex}: {this.props.category}
+        </h5>
+        <div style={this.shelfStyle()}>
+          {this.getElements()}
+        </div>
+      </div>
+    )
   }
 }

@@ -1,9 +1,9 @@
 import React, { Component } from "react"
 import ReactDOM from 'react-dom'
 import Request from "superagent"
-import Shelf from "./views/shelf"
+import Shelf from "./views/Shelf"
 
-const COLUMNS_SIZE = 4
+const COLUMNS_SIZE = 5
 
 class App extends Component {
   constructor(props){
@@ -11,164 +11,180 @@ class App extends Component {
 
     this.nowWaiting = false
 
-    console.log("init")
     this.state = {
       query: "",
-      entryClusters: [],
-      vIndex: 0,
-      hIndex: 0
+      entryClusters: [], //{category: String, entries: [String]}
+      currentCategoryIndex: 0,
+      currentEntryIndex: 0
     }
   }
 
   componentDidMount() {
-    this.updateQuery(decodeURI(location.pathname.replace("/", "")))
+    this.requestQuery(decodeURI(location.pathname.replace("/", "")))
     window.addEventListener("keydown", ::this.handleKeyDown)
   }
 
-  currentEntries() {
-    return this.state.entryClusters[this.state.vIndex]
+  findCategory(array, title){
+
   }
 
-  currentCategory() {
-    return !(this.state.entryClusters.length > 0) ? "" : this.state.entryClusters[this.state.vIndex][0]
-  }
-
-  waitForSelect() {
-    if (this.nowWaiting) {
-      return
-    }
-    this.nowWaiting = true
-    return setTimeout(() => {
-      this.openQuery()
-      this.nowWaiting = false
-    }, 1000)
-  }
-
-  updateQuery(query) {
-    if(!query || query.length == 0 || query == this.state.query){
-      return
-    }
-
-    this.setState({
-      query: query
-    }, () => {
-      history.pushState(query, null, "/" + query)
-    })
+  request(query) {
+    console.log('submit query')
 
     Request
       .get(`/memberbymember/${query}`)
       .then(res => {
+        console.log("server response received")
         console.log(res.body)
-        const result = []
-        for(let index in res.body){
-          const label = res.body[index][0]
-          if(index == this.state.vIndex && this.state.entryClusters.length > 0){
-            result.push(this.currentEntries())
-          }
-          if(index >= COLUMNS_SIZE || label == this.currentCategory()){
-            continue
-          }
 
-          //queryと同じ名前のエントリを同じ列に並べる
-          const existIndex = res.body[index][1].indexOf(this.state.query)
-          if(existIndex != -1){
-            res.body[index][1].splice(existIndex, 1)
+        //直前にフォーカスしていたカテゴリにピボットする
+        const index = this.state.query == "" ? Math.floor(res.body.length / 2) : (() => {
+          for(let i = 0; i < res.body.length; i++){
+            if(res.body[i].category == this.state.entryClusters[this.state.currentCategoryIndex].category){
+              return i
+            }
           }
-          res.body[index][1].splice(this.state.hIndex, 0, this.state.query)
-          result.push(res.body[index])
-        }
+          return -1
+        })()
 
-        if(res.body.length <= this.state.vIndex){
-          result.push(this.currentEntries())
-          this.setState({
-            vIndex: result.length - 1
-          })
-        }
+        console.log(index)
 
-        console.log(`res.length: ${res.body.length}  result.length: ${result.length}`)
         this.setState({
-          entryClusters: result
+          currentCategoryIndex: index,
+          currentEntryIndex: res.body[index].entries.indexOf(query),
+          query: query,
+          entryClusters: res.body
+        }, () => {
+          this.refreshColumns()
         })
       })
       .catch(err => console.error)
   }
 
-  openQuery(query = this.currentEntries()[1][this.state.hIndex]) {
-    this.updateQuery(query)
+  currentEntries() {
+    return this.state.entryClusters[this.state.currentCategoryIndex].entries
+  }
+
+  currentCategory() {
+    return this.state.entryClusters[this.state.currentCategoryIndex].category
+  }
+
+  waitForSelect() {
+    clearTimeout(this.timerID)
+    this.timerID = setTimeout(() => {
+      this.requestQuery()
+    }, 1000)
+
+
+    // if (this.nowWaiting) {
+    //   return
+    // }
+    // this.nowWaiting = true
+    // return setTimeout(() => {
+    //   this.requestQuery()
+    //   this.nowWaiting = false
+    // }, 1000)
+  }
+
+  requestQuery(query = this.currentEntries()[this.state.currentEntryIndex]) {
+    console.log("request!")
+    console.log(query)
+    if(!query || query.length == 0 || query == this.state.query){
+      return
+    }
+    this.request(query)
+    history.pushState(query, null, "/" + query)
   }
 
   handleKeyDown(e) {
     e.preventDefault()
     switch (e.keyCode) {
       case 38: //↑
-        if (this.state.hIndex <= 0) {
+        if (this.state.currentEntryIndex <= 0) {
           return
         }
         this.setState({
-          hIndex: this.state.hIndex - 1
+          currentEntryIndex: this.state.currentEntryIndex - 1
+        }, () => {
+          this.refreshColumns()
         })
         return this.waitForSelect()
       case 40: //↓
-        if (this.state.hIndex >= this.currentEntries()[1].length) {
+        if (this.state.currentEntryIndex >= this.currentEntries().length - 1) {
           return
         }
         this.setState({
-          hIndex: this.state.hIndex + 1
+          currentEntryIndex: this.state.currentEntryIndex + 1
+        }, () => {
+          this.refreshColumns()
         })
         return this.waitForSelect()
       case 37: //←
-        //vIndex
-        if (this.state.vIndex <= 0) {
+        //currentCategoryIndex
+        if (this.state.currentCategoryIndex <= 0) {
           return
         }
         this.setState({
-          vIndex: this.state.vIndex - 1
+          currentCategoryIndex: this.state.currentCategoryIndex - 1,
+          currentEntryIndex: this.state.entryClusters[this.state.currentCategoryIndex - 1].entries.indexOf(this.state.query)
         })
-        return this.waitForSelect()
+        return this.refreshColumns()
       case 39: //→
-        if (this.state.vIndex >= this.state.entryClusters.length - 1) {
+        if (this.state.currentCategoryIndex >= this.state.entryClusters.length - 1) {
           return
         }
         this.setState({
-          vIndex: this.state.vIndex + 1
+          currentCategoryIndex: this.state.currentCategoryIndex + 1,
+          currentEntryIndex: this.state.entryClusters[this.state.currentCategoryIndex + 1].entries.indexOf(this.state.query)
         })
-        return this.waitForSelect()
+        return this.refreshColumns()
     }
   }
 
+  refreshColumns() {
+    const offset = (COLUMNS_SIZE - 1) / 2
+    const columns = []
+
+    if(this.state.entryClusters.length == 0) {
+      return
+    }
+
+    for(let i = 0; i < COLUMNS_SIZE; i++){
+      const isActive = i == offset
+      const cluster = this.state.entryClusters[this.state.currentCategoryIndex - offset + i]
+
+      if(!cluster){
+        columns.push(
+          <Shelf empty={true} />
+        )
+        continue
+      }
+
+      //currentCategory以外
+      const index = isActive ? this.state.currentEntryIndex : cluster.entries.indexOf(this.state.query)
+
+      columns.push(
+        <Shelf
+          debugindex={this.state.currentCategoryIndex - offset + i}
+          key={`shelf-${i}`}
+          rowSize={COLUMNS_SIZE}
+          category={cluster ? cluster.category : ""}
+          entries={cluster ? cluster.entries : ""}
+          isActive={isActive}
+          index={index}
+        />
+      )
+    }
+    console.log('columns updated')
+    console.log(columns)
+
+    this.setState({
+      columns: columns
+    })
+  }
+
   render() {
-    console.log(this.state)
-    const col = []
-    let iframe
-
-    for(let index in this.state.entryClusters){
-      const cluster  = this.state.entryClusters[index]
-      col.push(
-        <div className="col-xs-2">
-          <h5 style={{
-            height: 30,
-            textDecoration: "underline"
-          }}>
-            {cluster[0].replace("Category:", "")}
-          </h5>
-          <Shelf
-            entries={cluster[1]}
-            isActive={this.state.vIndex == index}
-            hIndex={this.state.hIndex}
-            query={this.state.query}
-          />
-        </div>
-      )
-    }
-
-    if(col.length > 0){
-      iframe = (
-        <iframe
-          src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
-          width="100%"
-          height="100%" />
-      )
-    }
+    console.log("render")
 
     return(
       <div
@@ -176,9 +192,17 @@ class App extends Component {
         style={{ display: "flex" }} >
         <div className="row">
           <h4>{this.state.query}</h4>
-          {col}
+          <h4>currentCategoryIndex: {this.state.currentCategoryIndex} currentEntryIndex: {this.state.currentEntryIndex}</h4>
+          <div className="col-xs-12">
+            <div className="row">
+              {this.state.columns}
+            </div>
+          </div>
           <div className="col-xs-4">
-            {iframe}
+            <iframe
+              src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
+              width="100%"
+              height="100%" />
           </div>
         </div>
       </div>
