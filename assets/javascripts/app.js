@@ -173,19 +173,21 @@ class App extends Component {
 
   render() {
     console.log("render")
-    // const wikipedia = (
-    //   <iframe
-    //     src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
-    //     width="100%"
-    //     height="100%" />
-    // )
-    const wikipedia = ""
+    const wikipedia = (
+      <iframe
+        src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
+        width="100%"
+        height="100%" />
+    )
+    // const wikipedia = ""
 
     return(
       <div
         className="container-fluid"
         style={{ display: "flex" }} >
-        <div className="row">
+        <div
+          className="row"
+          style={{ width: "100%" }} >
           <h4>{this.state.query}</h4>
           <h4>currentCategoryIndex: {this.state.currentCategoryIndex} currentEntryIndex: {this.state.currentEntryIndex}</h4>
           <div className="col-xs-12">
