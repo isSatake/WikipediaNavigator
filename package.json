@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "npm run build",
     "start": "node app.js",
-    "start:dev": "node-dev app.js",
+    "start:dev": "DEBUG=index node-dev app.js",
     "start:all": "run-p start:dev watch",
     "build": "browserify assets/javascripts/app.js --transform babelify --outfile public/main.js",
     "watch": "watchify --verbose --debug assets/javascripts/app.js --transform babelify --outfile public/main.js"

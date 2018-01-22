@@ -4,6 +4,7 @@ import Request from "superagent"
 import Shelf from "./views/Shelf"
 
 const COLUMNS_SIZE = 5
+const QUERY_WAIT_MSEC = 500
 
 class App extends Component {
   constructor(props){
@@ -18,19 +19,15 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.requestQuery(decodeURI(location.pathname.replace("/", "")))
+    this.requestQuery(decodeURIComponent(location.pathname.replace("/", "")))
     window.addEventListener("keydown", ::this.handleKeyDown)
-  }
-
-  findCategory(array, title){
-
   }
 
   request(query) {
     console.log('submit query')
 
     Request
-      .get(`/memberbymember/${query}`)
+      .get(`/memberbymember/${encodeURIComponent(query)}`)
       .then(res => {
         console.log("server response received")
         console.log(res.body)
@@ -71,7 +68,7 @@ class App extends Component {
     clearTimeout(this.timerID)
     this.timerID = setTimeout(() => {
       this.requestQuery()
-    }, 500)
+    }, QUERY_WAIT_MSEC)
   }
 
   requestQuery(query = this.currentEntries()[this.state.currentEntryIndex]) {
@@ -80,8 +77,9 @@ class App extends Component {
     if(!query || query.length == 0 || query == this.state.query){
       return
     }
+    const encodedQuery = encodeURIComponent(query)
     this.request(query)
-    history.pushState(query, null, "/" + query)
+    history.pushState(encodedQuery, null, "/" + encodedQuery)
   }
 
   handleKeyDown(e) {

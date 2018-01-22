@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path')
 const mysql = require('mysql2/promise')
+const debug = require('debug')('index')
 const SLOW_QUERY_THRESHOLD = 2500
 let db
 let excludedCategories = []
@@ -72,6 +73,7 @@ async function list_categories(title){
 }
 
 async function member_by_member(page){
+  debug(`member_by_member ${page}`)
   const categories = await getCategories(page)
   const members = []
   for(let category of categories){
@@ -80,12 +82,10 @@ async function member_by_member(page){
   return members
 }
 
-//root
 router.get('/:word', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// メンバからメンバ
 router.get('/memberbymember/:word', async function(req, res){
   res.send(await member_by_member(req.params.word))
 });
