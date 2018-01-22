@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const path = require('path')
 const mysql = require('mysql2/promise')
-const categoryFilter = require('../assets/javascripts/categoryFilter')
+const SLOW_QUERY_THRESHOLD = 2500
 let db
+let excludedCategories = []
 
 async function initDB() {
   db = await mysql.createConnection({
@@ -15,12 +16,28 @@ async function initDB() {
 
 (async function(){
   await initDB().catch((err) => console.error(err))
+  const rows = await db.execute('select * from excludedcategories;')
+  for(let row of rows[0]){
+    excludedCategories.push(row.title)
+  }
 })()
 
-async function getCategoryMember(category) {
-  const [rows, fields] = await db.execute(`select categorylinks.cl_to,page.page_title from categorylinks inner join page on categorylinks.cl_from = page.page_id where categorylinks.cl_to = '${category}'`)
-  const member = []
+function excludeCategory(title) {
+  db.execute(`insert into excludedcategories values('${title}')`)
+  excludedCategories.push(title)
+}
 
+async function getCategoryMember(category) {
+  const startTime = new Date().getTime()
+  const [rows, fields] = await db.execute(`select categorylinks.cl_to,page.page_title from categorylinks inner join page on categorylinks.cl_from = page.page_id where categorylinks.cl_to = '${category}'`)
+  const elapsedTime = new Date().getTime() - startTime
+
+  if(elapsedTime > SLOW_QUERY_THRESHOLD){
+    console.log(`Slow query detected! Category:${category}`)
+    excludeCategory(category)
+  }
+
+  const member = []
   for(let row of rows){
     member.push(row.page_title.toString())
   }
@@ -29,7 +46,7 @@ async function getCategoryMember(category) {
 }
 
 function isNotCategory(title){
-  for(let filter of categoryFilter){
+  for(let filter of excludedCategories){
     if(title.indexOf(filter) >= 0){
       return true
     }

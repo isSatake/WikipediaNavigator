@@ -9,8 +9,6 @@ class App extends Component {
   constructor(props){
     super(props)
 
-    this.nowWaiting = false
-
     this.state = {
       query: "",
       entryClusters: [], //{category: String, entries: [String]}
@@ -73,17 +71,7 @@ class App extends Component {
     clearTimeout(this.timerID)
     this.timerID = setTimeout(() => {
       this.requestQuery()
-    }, 1000)
-
-
-    // if (this.nowWaiting) {
-    //   return
-    // }
-    // this.nowWaiting = true
-    // return setTimeout(() => {
-    //   this.requestQuery()
-    //   this.nowWaiting = false
-    // }, 1000)
+    }, 500)
   }
 
   requestQuery(query = this.currentEntries()[this.state.currentEntryIndex]) {
@@ -185,6 +173,13 @@ class App extends Component {
 
   render() {
     console.log("render")
+    // const wikipedia = (
+    //   <iframe
+    //     src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
+    //     width="100%"
+    //     height="100%" />
+    // )
+    const wikipedia = ""
 
     return(
       <div
@@ -199,10 +194,7 @@ class App extends Component {
             </div>
           </div>
           <div className="col-xs-4">
-            <iframe
-              src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
-              width="100%"
-              height="100%" />
+            {wikipedia}
           </div>
         </div>
       </div>
