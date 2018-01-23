@@ -7,6 +7,13 @@ export default class Shelf extends Component {
     console.log('Shelf constructed')
   }
 
+  shouldComponentUpdate(nextProps, nextState){
+    if(this.props.category == nextProps.category && this.props.index == nextProps.index){
+      return false
+    }
+    return true
+  }
+
   shelfStyle() {
     if(this.props.isActive){
       return {
@@ -69,7 +76,7 @@ export default class Shelf extends Component {
           height: 30,
           textDecoration: "underline"
         }}>
-          {this.props.debugindex}: {this.props.category}
+          {this.props.category}
         </h5>
         <div style={this.shelfStyle()}>
           {this.getElements()}

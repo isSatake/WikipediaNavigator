@@ -26,21 +26,20 @@ export default class Entry extends Component {
 
   componentWillReceiveProps(nextProps){
     console.log(nextProps)
+    if(this.props.title == nextProps.title){
+      return
+    }
     this.setState({img: "./images/noimg.png"})
     this.searchImage(nextProps.title)
   }
 
   searchImage(title = this.props.title) {
     console.log("search image")
-    //キャッシュを保存
 
     // Request
-    //   .get(`https://api.cognitive.microsoft.com/bing/v7.0/images/search?count=1&q=${encodeURIComponent(title)}`)
-    //   .set("Ocp-Apim-Subscription-Key", "3ebf24197a5a4366b937f25e14869320")
+    //   .get(`getimage/${title}`)
     //   .then(res => {
-    //     // return res.body.value ? res.body.value[0].thumbnailUrl : "./images/noimg.png"
-    //     const img = res.body.value ? res.body.value[0].thumbnailUrl : "./images/noimg.png"
-    //     this.setState({img: img})
+    //     this.setState({ img: res.text })
     //   })
   }
 
@@ -60,7 +59,7 @@ export default class Entry extends Component {
         <img
           src={this.state.img}
           width={30} />
-        {this.props.debugindex}: {this.props.title}
+        {this.props.title}
       </div>
     )
   }

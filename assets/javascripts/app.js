@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import Request from "superagent"
 import Shelf from "./views/Shelf"
 
-const COLUMNS_SIZE = 5
+const COLUMNS_SIZE = 3
 const QUERY_WAIT_MSEC = 500
 
 class App extends Component {
@@ -187,8 +187,7 @@ class App extends Component {
           className="row"
           style={{ width: "100%" }} >
           <h4>{this.state.query}</h4>
-          <h4>currentCategoryIndex: {this.state.currentCategoryIndex} currentEntryIndex: {this.state.currentEntryIndex}</h4>
-          <div className="col-xs-12">
+          <div className="col-xs-8">
             <div className="row">
               {this.state.columns}
             </div>

@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const path = require('path')
 const mysql = require('mysql2/promise')
+const Request = require('superagent')
 const debug = require('debug')('index')
 const SLOW_QUERY_THRESHOLD = 2500
+const BING_URL = 'https://api.cognitive.microsoft.com/bing/v7.0/images/search?count=1&q='
 let db
 let excludedCategories = []
 
@@ -68,12 +70,8 @@ async function getCategories(page) {
   return categories
 }
 
-async function list_categories(title){
-  return await getCategories(title)
-}
-
-async function member_by_member(page){
-  debug(`member_by_member ${page}`)
+async function memberByMember(page){
+  debug(`memberByMember ${page}`)
   const categories = await getCategories(page)
   const members = []
   for(let category of categories){
@@ -82,12 +80,31 @@ async function member_by_member(page){
   return members
 }
 
+async function getImage(title){
+  const res = await db.execute(`select url from image where title = '${title}'`)
+  if(res[0].length == 0){
+    const res = await Request.get(`${BING_URL}${encodeURIComponent(title)}`).set("Ocp-Apim-Subscription-Key", "3ebf24197a5a4366b937f25e14869320")
+    if(res.body.value[0]){
+      const url = res.body.value[0].thumbnailUrl
+      db.execute(`insert into image values('${title}', '${url}')`)
+      return url
+    }
+    return ""
+  } else {
+    return res[0][0].url
+  }
+}
+
 router.get('/:word', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 router.get('/memberbymember/:word', async function(req, res){
-  res.send(await member_by_member(req.params.word))
+  res.send(await memberByMember(req.params.word))
 });
+
+router.get('/getimage/:word', async function(req, res){
+  res.send(await getImage(req.params.word))
+})
 
 module.exports = router;
