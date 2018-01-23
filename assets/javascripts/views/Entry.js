@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import Request from "superagent"
 
-const ENTRY_HEIGHT = 40
+const ENTRY_HEIGHT = 70
 
 export default class Entry extends Component {
   constructor(props){
@@ -15,12 +15,13 @@ export default class Entry extends Component {
       overflow: "hidden",
       width: "100%",
       height: ENTRY_HEIGHT,
-      marginBottom: 40
+      marginBottom: 30,
+      borderRadius: "20px"
     }
     if(this.props.isFocus){
-      this.style.background = "#DDD"
+      this.style.background = "#AAA"
     }else{
-      this.style.background = "#FFF"
+      this.style.background = "#EEE"
     }
 
     this.searchImage()
@@ -38,11 +39,11 @@ export default class Entry extends Component {
   searchImage(title = this.props.title) {
     console.log("search image")
 
-    Request
-      .get(`getimage/${title}`)
-      .then(res => {
-        this.setState({ img: res.text })
-      })
+    // Request
+    //   .get(`getimage/${title}`)
+    //   .then(res => {
+    //     this.setState({ img: res.text })
+    //   })
   }
 
   render() {
@@ -63,9 +64,13 @@ export default class Entry extends Component {
           style={{
             width: ENTRY_HEIGHT,
             height: ENTRY_HEIGHT,
-            objectFit: "cover"
+            objectFit: "cover",
+            marginRight: "10px",
+            borderRadius: "20px"
           }} />
-        {this.props.title}
+        <span style={{verticalAlign: "middle" }}>
+          {this.props.title}
+        </span>
       </div>
     )
   }

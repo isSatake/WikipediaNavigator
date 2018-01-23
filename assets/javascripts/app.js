@@ -136,7 +136,7 @@ class App extends Component {
     }
 
     for(let i = 0; i < COLUMNS_SIZE; i++){
-      const isActive = i == offset
+      const isFocus = i == offset
       const cluster = this.state.entryClusters[this.state.currentCategoryIndex - offset + i]
 
       if(!cluster){
@@ -147,7 +147,7 @@ class App extends Component {
       }
 
       //currentCategory以外
-      const index = isActive ? this.state.currentEntryIndex : cluster.entries.indexOf(this.state.query)
+      const index = isFocus ? this.state.currentEntryIndex : cluster.entries.indexOf(this.state.query)
 
       columns.push(
         <Shelf
@@ -156,7 +156,7 @@ class App extends Component {
           rowSize={COLUMNS_SIZE}
           category={cluster ? cluster.category : ""}
           entries={cluster ? cluster.entries : ""}
-          isActive={isActive}
+          isFocus={isFocus}
           index={index}
         />
       )
@@ -186,8 +186,7 @@ class App extends Component {
         <div
           className="row"
           style={{ width: "100%" }} >
-          <h4>{this.state.query}</h4>
-          <div className="col-xs-8">
+          <div className="col-xs-10">
             <div className="row">
               {this.state.columns}
             </div>

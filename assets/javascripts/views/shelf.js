@@ -5,6 +5,23 @@ export default class Shelf extends Component {
   constructor(props){
     super(props)
     console.log('Shelf constructed')
+
+    this.titleStyle = {
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      width: "100%",
+      height: 40,
+      marginBottom: 30,
+      borderRadius: 20,
+      padding: 10
+    }
+
+    if(this.props.isFocus){
+      this.titleStyle.background = "#AAA"
+    }else{
+      this.titleStyle.background = "#EEE"
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState){
@@ -12,19 +29,6 @@ export default class Shelf extends Component {
       return false
     }
     return true
-  }
-
-  shelfStyle() {
-    if(this.props.isActive){
-      return {
-        background: "wheat",
-        padding: 10
-      }
-    }else{
-      return {
-        padding: 10
-      }
-    }
   }
 
   getElements() {
@@ -51,7 +55,6 @@ export default class Shelf extends Component {
       )
     }
     console.log('entries prepared')
-    // console.log(elements)
 
     return elements
   }
@@ -72,13 +75,10 @@ export default class Shelf extends Component {
       <div
         className="col-xs-2 shelf"
         style={{height: "80%"}}>
-        <h5 style={{
-          height: 30,
-          textDecoration: "underline"
-        }}>
-          {this.props.category}
-        </h5>
-        <div style={this.shelfStyle()}>
+        <div style={this.titleStyle}>
+          <span style={{verticalAlign: "middle"}}>{this.props.category}</span>
+        </div>
+        <div>
           {this.getElements()}
         </div>
       </div>
