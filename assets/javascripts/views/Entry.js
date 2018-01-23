@@ -6,9 +6,11 @@ const ENTRY_HEIGHT = 70
 export default class Entry extends Component {
   constructor(props){
     super(props)
+
     this.state = {
       img: "./images/noimg.png"
     }
+
     this.style = {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
@@ -22,6 +24,14 @@ export default class Entry extends Component {
       this.style.background = "#AAA"
     }else{
       this.style.background = "#EEE"
+    }
+
+    this.imgStyle = {
+      width: ENTRY_HEIGHT,
+      height: ENTRY_HEIGHT,
+      objectFit: "cover",
+      marginRight: "10px",
+      borderRadius: "20px"
     }
 
     this.searchImage()
@@ -51,9 +61,8 @@ export default class Entry extends Component {
 
     if(this.props.empty){
       return(
-        <div
-          className={"emptyentry"}
-          style={this.style}></div>
+        <div style={this.style}>
+        </div>
       )
     }
 
@@ -61,14 +70,8 @@ export default class Entry extends Component {
       <div style={this.style}>
         <img
           src={this.state.img}
-          style={{
-            width: ENTRY_HEIGHT,
-            height: ENTRY_HEIGHT,
-            objectFit: "cover",
-            marginRight: "10px",
-            borderRadius: "20px"
-          }} />
-        <span style={{verticalAlign: "middle" }}>
+          style={this.imgStyle} />
+        <span style={{ verticalAlign: "middle" }}>
           {this.props.title}
         </span>
       </div>

@@ -13,6 +13,7 @@ class App extends Component {
     this.state = {
       query: "",
       entryClusters: [], //{category: String, entries: [String]}
+      columns: [],
       currentCategoryIndex: 0,
       currentEntryIndex: 0
     }
