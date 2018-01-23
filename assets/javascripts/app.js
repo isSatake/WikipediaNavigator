@@ -175,7 +175,7 @@ class App extends Component {
       <iframe
         src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
         width="100%"
-        height="100%" />
+        height="90%" />
     )
     // const wikipedia = ""
 
@@ -183,18 +183,20 @@ class App extends Component {
       <div
         className="container-fluid"
         style={{ display: "flex" }} >
-        <div
-          className="row"
-          style={{ width: "100%" }} >
-          <div className="col-xs-10">
-            <div className="row">
+          <div style={{
+            width: "60%"
+          }}>
+            <div style={{
+              display: "flex"
+            }}>
               {this.state.columns}
             </div>
           </div>
-          <div className="col-xs-4">
+          <div style={{
+            width: "40%"
+          }}>
             {wikipedia}
           </div>
-        </div>
       </div>
     )
   }

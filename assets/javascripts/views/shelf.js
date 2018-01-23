@@ -64,17 +64,21 @@ export default class Shelf extends Component {
 
     if(this.props.empty){
       return(
-        <div
-          className="col-xs-2 emptyshelf"
-          style={{height: "80%"}}>
+        <div style={{
+          height: "80%",
+          width: "30%",
+          marginRight: "20px"
+        }}>
         </div>
       )
     }
 
     return (
-      <div
-        className="col-xs-2 shelf"
-        style={{height: "80%"}}>
+      <div style={{
+          height: "80%",
+          width: "30%",
+          marginRight: "20px"
+        }}>
         <div style={this.titleStyle}>
           <span style={{verticalAlign: "middle"}}>{this.props.category}</span>
         </div>
