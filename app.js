@@ -12,6 +12,8 @@ var debug = require('debug')('server');
 
 var app = express();
 
+require('dotenv').config()
+
 app.set('port', process.env.PORT || '3000');
 app.use(logger('dev'));
 app.use(bodyParser.json());

@@ -11,13 +11,14 @@ let excludedCategories = []
 
 async function initDB() {
   db = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'wikipage'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    database: process.env.DB_NAME
   })
 }
 
 (async function(){
+  require('dotenv').config()
   await initDB().catch((err) => console.error(err))
   const rows = await db.execute('select * from excludedcategories;')
   for(let row of rows[0]){
