@@ -49,11 +49,11 @@ export default class Entry extends Component {
   searchImage(title = this.props.title) {
     console.log("search image")
 
-    // Request
-    //   .get(`getimage/${title}`)
-    //   .then(res => {
-    //     this.setState({ img: res.text })
-    //   })
+    Request
+      .get(`getimage/${title}`)
+      .then(res => {
+        this.setState({ img: res.text })
+      })
   }
 
   render() {
