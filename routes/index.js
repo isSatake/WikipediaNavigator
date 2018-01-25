@@ -4,7 +4,7 @@ const path = require('path')
 const mysql = require('mysql2/promise')
 const Request = require('superagent')
 const debug = require('debug')('index')
-const SLOW_QUERY_THRESHOLD = 2500
+const SLOW_QUERY_THRESHOLD = 5000
 const BING_URL = 'https://api.cognitive.microsoft.com/bing/v7.0/images/search?count=1&q='
 let db
 let excludedCategories = []
@@ -20,6 +20,7 @@ async function initDB() {
 (async function(){
   require('dotenv').config()
   await initDB().catch((err) => console.error(err))
+  await db.execute('set names utf8')
   const rows = await db.execute('select * from excludedcategories;')
   for(let row of rows[0]){
     excludedCategories.push(row.title)
