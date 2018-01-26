@@ -37,10 +37,10 @@ async function getCategoryMember(category) {
   const [rows, fields] = await db.execute(`select categorylinks.cl_to,page.page_title from categorylinks inner join page on categorylinks.cl_from = page.page_id where categorylinks.cl_to = '${category}'`)
   const elapsedTime = new Date().getTime() - startTime
 
-  if(elapsedTime > SLOW_QUERY_THRESHOLD){
-    console.log(`Slow query detected! Category:${category}`)
-    excludeCategory(category)
-  }
+  // if(elapsedTime > SLOW_QUERY_THRESHOLD){
+  //   console.log(`Slow query detected! Category:${category}`)
+  //   excludeCategory(category)
+  // }
 
   const member = []
   for(let row of rows){
