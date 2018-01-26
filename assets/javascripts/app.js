@@ -73,7 +73,7 @@ class App extends Component {
   }
 
   requestQuery(query = this.currentEntries()[this.state.currentEntryIndex]) {
-    console.log("request!")
+    console.log("request")
     console.log(query)
     if(!query || query.length == 0 || query == this.state.query){
       return
