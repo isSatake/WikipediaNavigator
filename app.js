@@ -94,5 +94,5 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-
+process.on('unhandledRejection', console.dir)
 module.exports = app;

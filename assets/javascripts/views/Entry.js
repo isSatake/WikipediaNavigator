@@ -34,7 +34,7 @@ export default class Entry extends Component {
       borderRadius: "20px"
     }
 
-    this.searchImage()
+//    this.searchImage()
   }
 
   componentWillReceiveProps(nextProps){
@@ -43,7 +43,7 @@ export default class Entry extends Component {
       return
     }
     this.setState({img: "./images/noimg.png"})
-    this.searchImage(nextProps.title)
+    //this.searchImage(nextProps.title)
   }
 
   searchImage(title = this.props.title) {
@@ -68,9 +68,6 @@ export default class Entry extends Component {
 
     return(
       <div style={this.style}>
-        <img
-          src={this.state.img}
-          style={this.imgStyle} />
         <span style={{ verticalAlign: "middle" }}>
           {this.props.title}
         </span>
