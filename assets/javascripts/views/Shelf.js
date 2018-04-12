@@ -10,11 +10,21 @@ export default class Shelf extends Component {
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
       overflow: "hidden",
-      width: "100%",
-      height: 40,
-      marginBottom: 30,
+      height: 50,
+      marginBottom: 20,
       borderRadius: 20,
-      padding: 10
+      paddingLeft: 10,
+      fontWeight: "bold",
+      fontSize: 15,
+      display: "flex",
+      alignItems: "center",
+      boxSizing: "border-box"
+    }
+
+    this.wrapperStyle = {
+      height: "80%",
+      width: 210,
+      paddingRight: "20px"
     }
 
     if(this.props.isFocus){
@@ -24,14 +34,14 @@ export default class Shelf extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate = (nextProps, nextState) => {
     if(this.props.category == nextProps.category && this.props.index == nextProps.index){
       return false
     }
     return true
   }
 
-  getElements() {
+  getElements = () => {
     // const index = this.props.index//this.props.entries.indexOf(this.props.query)
     const offset = (this.props.rowSize - 1) / 2
     const elements = []
@@ -51,6 +61,7 @@ export default class Shelf extends Component {
           key={`entry-${i}`}
           title={this.props.entries[index]}
           isFocus={i == offset}
+          db={this.props.db}
         />
       )
     }
@@ -59,28 +70,21 @@ export default class Shelf extends Component {
     return elements
   }
 
-  render() {
+  render = () => {
     console.log("render")
 
     if(this.props.empty){
       return(
-        <div style={{
-          height: "80%",
-          width: "30%",
-          marginRight: "20px"
-        }}>
-        </div>
+        <div
+          key={"0"}
+          style={this.wrapperStyle}></div>
       )
     }
 
     return (
-      <div style={{
-          height: "80%",
-          width: "30%",
-          marginRight: "20px"
-        }}>
+      <div style={this.wrapperStyle}>
         <div style={this.titleStyle}>
-          <span style={{verticalAlign: "middle"}}>{this.props.category}</span>
+          <div>{this.props.category}</div>
         </div>
         <div>
           {this.getElements()}

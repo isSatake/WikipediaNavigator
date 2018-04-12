@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import Request from "superagent"
 
-const ENTRY_HEIGHT = 70
+const ENTRY_HEIGHT = 40
 
 export default class Entry extends Component {
   constructor(props){
@@ -17,11 +17,19 @@ export default class Entry extends Component {
       overflow: "hidden",
       width: "100%",
       height: ENTRY_HEIGHT,
-      marginBottom: 30,
-      borderRadius: "20px"
+      marginBottom: 20,
+      paddingLeft: 10,
+      borderRadius: "20px",
+      display: "flex",
+      alignItems: "center",
+      boxSizing: "border-box"
     }
-    if(this.props.isFocus){
+
+    if(this.props.empty){
+      this.style.background = "#FFF"
+    }else if(this.props.isFocus){
       this.style.background = "#AAA"
+      this.style.fontWeight = "bold"
     }else{
       this.style.background = "#EEE"
     }
@@ -34,43 +42,44 @@ export default class Entry extends Component {
       borderRadius: "20px"
     }
 
-//    this.searchImage()
+    // this.searchImage()
   }
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps = (nextProps) => {
     console.log(nextProps)
     if(this.props.title == nextProps.title){
       return
     }
     this.setState({img: "./images/noimg.png"})
-    //this.searchImage(nextProps.title)
+    // this.searchImage(nextProps.title)
   }
 
-  searchImage(title = this.props.title) {
-    console.log("search image")
-
-    Request
-      .get(`getimage/${title}`)
-      .then(res => {
-        this.setState({ img: res.text })
-      })
+  searchImage = async (title = this.props.title) => {
+    // console.log("search image")
+    // this.setState({ img: await this.props.db.getImage(title) })
   }
 
-  render() {
+  render = () => {
     console.log("render")
 
     if(this.props.empty){
       return(
-        <div style={this.style}>
-        </div>
+        <div style={this.style}></div>
       )
     }
 
+    // const img = {
+    //   <img
+    //     src={this.state.img}
+    //     style={this.imgStyle} />
+    // }
+
+    const img = ""
+
     return(
       <div style={this.style}>
-        <span style={{ verticalAlign: "middle" }}>
-          {this.props.title}
-        </span>
+        {img}
+        <div>{this.props.title}</div>
       </div>
     )
   }

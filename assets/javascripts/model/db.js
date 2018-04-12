@@ -1,26 +1,34 @@
-const mysql = require('mysql2/promise')
-const debug = require('debug')('db')
-let db
+import Request from "superagent"
 
-exports.init = async function initDB() {
-  require('dotenv').config()
-  db = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    database: process.env.DB_NAME
-  })
-  await db.execute('set names utf8')
+exports.memberByMember = async (query) => {
+  const res = await Request.get(`/memberbymember/${encodeURIComponent(query)}`)
+  return res.body
 }
 
-exports async function getCategoryMember(category) {
-  const startTime = new Date().getTime()
-  const [rows, fields] = await db.execute(`select categorylinks.cl_to,page.page_title from categorylinks inner join page on categorylinks.cl_from = page.page_id where categorylinks.cl_to = ${db.escape(category)}`)
-  const elapsedTime = new Date().getTime() - startTime
-
-  // if(elapsedTime > SLOW_QUERY_THRESHOLD){
-  //   console.log(`Slow query detected! Category:${category}`)
-  //   excludeCategory(category)
+exports.getImage = async (title) => {
+  // const res = await db.execute(`select url from image where title = ${db.escape(title)}`)
+  // if(res[0].length == 0){
+  //   console.log(title)
+  //   // const res = await Request.get(`${BING_URL}${encodeURIComponent(title)}`).set("Ocp-Apim-Subscription-Key", "3ebf24197a5a4366b937f25e14869320")
+  //   const { err, $, res, body } = await client.fetch("http://image.search.yahoo.co.jp/search?", { n: 1, p: title })
+  //   console.log($("a img")[0])
+  //   // if(res.body.value[0]){
+  //   //   const url = res.body.value[0].thumbnailUrl
+  //   //   db.execute(`insert into image values(${db.escape(title)}, '${url}')`).catch((e) => {})
+  //   //   return url
+  //   // }
+    return ""
+  // } else {
+  //   return res[0][0].url
   // }
+}
 
-  return rows
+exports.getRandomPage = async () => {
+  const res = await Request.get(`/getrandompage/`)
+  return res.text
+}
+
+exports.searchByTitle = async (query) => {
+  const res = await Request.get(`/searchbytitle/${query}`)
+  return res.body[0]
 }

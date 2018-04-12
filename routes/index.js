@@ -97,9 +97,21 @@ async function getImage(title){
   }
 }
 
-router.get('/:word', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
+async function getRandomPage(){
+  let res = await db.execute(`select page_title from page where page_random >= ${Math.random(1)} and page_namespace = 0 and page_is_redirect = 0 order by page_random limit 1;`)
+  if(res[0].length == 0){
+    res = await db.execute(`select page_title from page where page_random >= 0 and page_namespace = 0 and page_is_redirect = 0 order by page_random limit 1;`)
+  }
+  return res[0][0].page_title.toString()
+}
+
+async function searchByTitle(query){
+  return await db.execute(`select page_title from page where page_title like '${query}%' and page_namespace = 0 and page_is_redirect = 0 limit 100;`)
+}
+
+// router.get('/:word', function(req, res, next) {
+//   res.sendFile(path.join(__dirname, '../public/index.html'));
+// });
 
 router.get('/memberbymember/:word', async function(req, res){
   res.send(await memberByMember(req.params.word))
@@ -107,6 +119,14 @@ router.get('/memberbymember/:word', async function(req, res){
 
 router.get('/getimage/:word', async function(req, res){
   res.send(await getImage(req.params.word))
+})
+
+router.get('/getrandompage/', async function(req, res){
+  res.send(await getRandomPage())
+})
+
+router.get('/searchbytitle/:word', async function(req, res){
+  res.send(await searchByTitle(req.params.word))
 })
 
 module.exports = router;
