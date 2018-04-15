@@ -17,14 +17,20 @@ export default class Search extends Component {
     })
   }
 
-  onSuggestionsFetchRequested = async ({ value }) => {
-    const res = await this.props.db.searchByTitle(value)
-    const suggestions = []
-    for(let obj of res){
-      suggestions.push((new Buffer(obj.page_title.data)).toString())
-    }
+  // onSuggestionsFetchRequested = async ({ value }) => {
+  //   const res = await this.props.db.searchByTitle(value)
+  //   const suggestions = []
+  //   for(let obj of res){
+  //     suggestions.push((new Buffer(obj.page_title.data)).toString())
+  //   }
+  //   this.setState({
+  //     suggestions: suggestions
+  //   })
+  // }
+
+  onSuggestionsFetchRequested = (query) => {
     this.setState({
-      suggestions: suggestions
+      suggestions: this.props.db.searchByTitle(query)
     })
   }
 

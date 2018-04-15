@@ -1,5 +1,12 @@
 import Request from "superagent"
 
+let pages
+
+(async () => {
+  const res = await Request.get(`/page.json`)
+  pages = JSON.parse(res.text)
+})()
+
 exports.memberByMember = async (query) => {
   const res = await Request.get(`/memberbymember/${encodeURIComponent(query)}`)
   return res.body
@@ -28,7 +35,17 @@ exports.getRandomPage = async () => {
   return res.text
 }
 
-exports.searchByTitle = async (query) => {
-  const res = await Request.get(`/searchbytitle/${query}`)
-  return res.body[0]
+exports.searchByTitle = (query) => {
+  const res = []
+  for(const page of pages){
+    if(page.title.indexOf(query.value) === 0){
+      res.push(page.title)
+    }
+  }
+  return res
 }
+
+// exports.searchByTitle = async (query) => {
+  // const res = await Request.get(`/searchbytitle/${query}`)
+  // return res.body[0]
+// }
