@@ -17,7 +17,7 @@ import SettingDrawer from './SettingDrawer'
 import db from "../model/db"
 
 const COLUMNS_SIZE = 5
-const QUERY_WAIT_MSEC = 500
+const QUERY_WAIT_MSEC = 0
 
 export default class Root extends Component {
   constructor(props){
