@@ -1,15 +1,31 @@
 import Request from "superagent"
 
-let pages
+let pages, pageToCat, catToPage
 
 (async () => {
-  const res = await Request.get(`/page.json`)
-  pages = JSON.parse(res.text)
+  // const page = await Request.get(`/page.json`)
+  // pages = JSON.parse(page.text)
+
+  const keypage = await Request.get(`/keypage.json`)
+  pageToCat = JSON.parse(keypage.text)
+
+  const keycat = await Request.get(`/keycat.json`)
+  catToPage = JSON.parse(keycat.text)
 })()
 
-exports.memberByMember = async (query) => {
-  const res = await Request.get(`/memberbymember/${encodeURIComponent(query)}`)
-  return res.body
+exports.memberByMember = async (page) => {
+  // const res = await Request.get(`/memberbymember/${encodeURIComponent(page)}`)
+  // console.log(res.body)
+  // return res.body
+
+  const obj = {}
+  const categories = pageToCat[page]
+  for(const category of categories){
+    obj.category = category
+    obj.entries = catToPage[category]
+  }
+
+  return obj
 }
 
 exports.getImage = async (title) => {

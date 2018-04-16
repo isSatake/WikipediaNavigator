@@ -32,7 +32,7 @@ function excludeCategory(title) {
   excludedCategories.push(title)
 }
 
-async function getCategoryMember(category) {
+async function getCategoryMember(category) {  //
   const startTime = new Date().getTime()
   const [rows, fields] = await db.execute(`select categorylinks.cl_to,page.page_title from categorylinks inner join page on categorylinks.cl_from = page.page_id where categorylinks.cl_to = ${db.escape(category)}`)
   const elapsedTime = new Date().getTime() - startTime
@@ -58,7 +58,7 @@ function isNotCategory(title){
   }
 }
 
-async function getCategories(page) {
+async function getCategories(page) { //できた
   const [rows, fields] = await db.execute(`select page.page_title,categorylinks.cl_to from page inner join categorylinks on page.page_id = categorylinks.cl_from where page.page_title = ${db.escape(page)};`)
   const categories = []
 
