@@ -14,12 +14,9 @@ import ArrowDown from 'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import Shelf from "./Shelf"
 import Search from './Search'
 import SettingDrawer from './SettingDrawer'
-
-import { memberByMember, getRandomPage, searchByTitle } from "../wikipedia"
-import db from "../model/db"
+import { initWikipedia, memberByMember, getRandomPage, searchByTitle } from "../wikipedia"
 
 const COLUMNS_SIZE = 5
-const QUERY_WAIT_MSEC = 500
 
 export default class Root extends Component {
   constructor(props){
@@ -45,6 +42,9 @@ export default class Root extends Component {
   }
 
   componentDidMount = async () => {
+    console.log('root:Wikipediaデータを初期化中だぞ')
+    await initWikipedia()
+    console.log('root:Wikipediaデータの準備ができたぞ')
     this.randomRequest()
     window.addEventListener("keydown", (e) => this.handleKeyDown(e))
   }
@@ -53,7 +53,7 @@ export default class Root extends Component {
     this.setState({
       query: ""
     }, async () => {
-      this.requestQuery(true, getRandomPage())
+      this.requestQuery(true, await getRandomPage())
     })
   }
 
@@ -108,14 +108,6 @@ export default class Root extends Component {
     return this.state.entryClusters[this.state.currentCategoryIndex].category
   }
 
-  waitForSelect = () => {
-    clearTimeout(this.timerID)
-    this.timerID = setTimeout(() => {
-      this.requestQuery()
-    }, QUERY_WAIT_MSEC)
-  }
-
-
   handleKeyDown = (e) => {
     if(e.keyCode != 37 && e.keyCode != 38 && e.keyCode != 39 && e.keyCode != 40 && e.keyCode != 13) {
       return
@@ -131,7 +123,7 @@ export default class Root extends Component {
         }, () => {
           this.refreshColumns()
         })
-        return this.waitForSelect()
+        return this.requestQuery()
       case 40: //↓
         if (this.state.currentEntryIndex >= this.currentEntries().length - 1) {
           return
@@ -141,7 +133,7 @@ export default class Root extends Component {
         }, () => {
           this.refreshColumns()
         })
-        return this.waitForSelect()
+        return this.requestQuery()
       case 37: //←
         //currentCategoryIndex
         if (this.state.currentCategoryIndex <= 0) {
@@ -202,7 +194,6 @@ export default class Root extends Component {
           entries={cluster ? cluster.entries : ""}
           isFocus={isFocus}
           index={index}
-          db={db}
         />
       )
     }
@@ -242,7 +233,7 @@ export default class Root extends Component {
 
     const search = (
       <Search
-        db={db}
+        searchByTitle={searchByTitle}
         requestQuery={this.requestQuery}/>
     )
 
@@ -270,8 +261,7 @@ export default class Root extends Component {
         {arrow}
         </FloatingActionButton>
         <SettingDrawer
-          open={this.state.drawerOpen}
-          db={db} />
+          open={this.state.drawerOpen} />
       </div>
     )
   }

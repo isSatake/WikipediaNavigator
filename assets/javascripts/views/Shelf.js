@@ -61,7 +61,6 @@ export default class Shelf extends Component {
           key={`entry-${i}`}
           title={this.props.entries[index]}
           isFocus={i == offset}
-          db={this.props.db}
         />
       )
     }

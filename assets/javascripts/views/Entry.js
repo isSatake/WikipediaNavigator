@@ -41,8 +41,6 @@ export default class Entry extends Component {
       marginRight: "10px",
       borderRadius: "20px"
     }
-
-    // this.searchImage()
   }
 
   componentWillReceiveProps = (nextProps) => {
@@ -51,12 +49,6 @@ export default class Entry extends Component {
       return
     }
     this.setState({img: "./images/noimg.png"})
-    // this.searchImage(nextProps.title)
-  }
-
-  searchImage = async (title = this.props.title) => {
-    // console.log("search image")
-    // this.setState({ img: await this.props.db.getImage(title) })
   }
 
   render = () => {
@@ -67,12 +59,6 @@ export default class Entry extends Component {
         <div style={this.style}></div>
       )
     }
-
-    // const img = {
-    //   <img
-    //     src={this.state.img}
-    //     style={this.imgStyle} />
-    // }
 
     const img = ""
 

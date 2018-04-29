@@ -27,6 +27,7 @@ module.exports = function(self){
         self.postMessage({ cmd: cmd, res: 'success' })
         break
       case 'memberByMember':
+        console.log(e.data.arg)
         self.postMessage({ cmd: cmd, res: memberByMember(e.data.arg) })
         break
       default:
