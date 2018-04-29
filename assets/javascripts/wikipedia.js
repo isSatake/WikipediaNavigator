@@ -35,9 +35,9 @@ pageToCatWorker.onmessage = (e) => {
 //   switch(e.data.cmd){
 //     case 'init':
 //       console.log(e.data.res)
-//       catToPageWorker.postMessage({ cmd: 'getPages', arg: '企業犯罪' })
+//       catToPageWorker.postMessage({ cmd: 'memberByMember', arg: ['企業犯罪', '1959年生'] })
 //       break
-//     case 'getPages':
+//     case 'memberByMember':
 //       console.log(e.data.res)
 //       break
 //   }

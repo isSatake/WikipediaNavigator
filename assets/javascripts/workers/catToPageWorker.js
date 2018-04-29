@@ -22,21 +22,23 @@ module.exports = function(self){
     switch(cmd){
       case 'init':
         console.log("start fetch catToPage")
-        catToPage = await fetch("keycat.json")
+        await init()
         console.log("done fetch catToPage")
         self.postMessage({ cmd: cmd, res: 'success' })
         break
-      case 'getPages':
-        self.postMessage({ cmd: cmd, res: getPages(e.data.arg) })
+      case 'memberByMember':
+        self.postMessage({ cmd: cmd, res: memberByMember(e.data.arg) })
         break
-      case 'getRandomPage':
-        break
-      case 'searchByTitle':
+      default:
+        self.postMessage({ cmd: cmd, res: "command not found" })
         break
     }
   })
 }
 
-const getPages = (catTitle) => {
-  return catToPage[catTitle]
+const init = async () => {
+  catToPage = await fetch("keycat.json")
+  return
 }
+
+const memberByMember = categories => categories.map(cat => ({category: cat, entries: catToPage[cat]}))

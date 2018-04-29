@@ -22,8 +22,7 @@ module.exports = function(self){
     switch(cmd){
       case 'init':
         console.log("start fetch pageToCat")
-        pageToCat = await fetch("keypage.json")
-        keys = Object.keys(pageToCat)
+        await init()
         console.log("done fetch pageToCat")
         self.postMessage({ cmd: cmd, res: 'success' })
         break
@@ -41,6 +40,12 @@ module.exports = function(self){
         break
     }
   })
+}
+
+const init = async () => {
+  pageToCat = await fetch("keypage.json")
+  keys = Object.keys(pageToCat)
+  return
 }
 
 const getCategories = pageTitle => pageToCat[pageTitle]

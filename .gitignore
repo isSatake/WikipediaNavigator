@@ -22,6 +22,8 @@ Temporary Items
 .apdisk
 
 public/main.js
+public/keypage.json
+public/keycat.json
 
 ### https://raw.github.com/github/gitignore/master/node.gitignore
 
