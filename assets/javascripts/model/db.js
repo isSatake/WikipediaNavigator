@@ -1,17 +1,36 @@
 import Request from "superagent"
 
+const work = require("webworkify")
 let pages, pageToCat, catToPage
 
-(async () => {
-  // const page = await Request.get(`/page.json`)
-  // pages = JSON.parse(page.text)
+// const pageToCatWorker = work(require("../workers/pageToCatWorker.js"))
+// pageToCatWorker.postMessage({ cmd: 'init' })
+// pageToCatWorker.onmessage = (e) => {
+//   switch(e.data.cmd){
+//     case 'init':
+//       console.log(e.data.res)
+//       pageToCatWorker.postMessage({ cmd: 'getCategories', arg: 'リクルート事件' })
+//       break
+//     case 'getCategories':
+//       console.log(e.data.res)
+//       break
+//   }
+// }
+//
+// const catToPageWorker = work(require("../workers/catToPageWorker.js"))
+// catToPageWorker.postMessage({ cmd: 'init' })
+// catToPageWorker.onmessage = (e) => {
+//   switch(e.data.cmd){
+//     case 'init':
+//       console.log(e.data.res)
+//       catToPageWorker.postMessage({ cmd: 'getPages', arg: '企業犯罪' })
+//       break
+//     case 'getPages':
+//       console.log(e.data.res)
+//       break
+//   }
+// }
 
-  const keypage = await Request.get(`/keypage.json`)
-  pageToCat = JSON.parse(keypage.text)
-
-  const keycat = await Request.get(`/keycat.json`)
-  catToPage = JSON.parse(keycat.text)
-})()
 
 exports.memberByMember = async (page) => {
   // const res = await Request.get(`/memberbymember/${encodeURIComponent(page)}`)

@@ -14,6 +14,8 @@ import ArrowDown from 'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import Shelf from "./Shelf"
 import Search from './Search'
 import SettingDrawer from './SettingDrawer'
+
+import { memberByMember, getRandomPage, searchByTitle } from "../wikipedia"
 import db from "../model/db"
 
 const COLUMNS_SIZE = 5
@@ -51,7 +53,7 @@ export default class Root extends Component {
     this.setState({
       query: ""
     }, async () => {
-      this.requestQuery(true, await db.getRandomPage())
+      this.requestQuery(true, getRandomPage())
     })
   }
 
@@ -72,7 +74,7 @@ export default class Root extends Component {
       isLoading: true
     })
 
-    const res = await db.memberByMember(query)
+    const res = await memberByMember(query)
     console.log(res)
 
     //直前にフォーカスしていたカテゴリにピボットする

@@ -50,14 +50,6 @@ async function getCategoryMember(category) {  //
   return member
 }
 
-function isNotCategory(title){
-  for(let filter of excludedCategories){
-    if(title.indexOf(filter) >= 0){
-      return true
-    }
-  }
-}
-
 async function getCategories(page) { //できた
   const [rows, fields] = await db.execute(`select page.page_title,categorylinks.cl_to from page inner join categorylinks on page.page_id = categorylinks.cl_from where page.page_title = ${db.escape(page)};`)
   const categories = []
@@ -82,21 +74,6 @@ async function memberByMember(page){
   return members
 }
 
-async function getImage(title){
-  const res = await db.execute(`select url from image where title = ${db.escape(title)}`)
-  if(res[0].length == 0){
-    const res = await Request.get(`${BING_URL}${encodeURIComponent(title)}`).set("Ocp-Apim-Subscription-Key", "3ebf24197a5a4366b937f25e14869320")
-    if(res.body.value[0]){
-      const url = res.body.value[0].thumbnailUrl
-      db.execute(`insert into image values(${db.escape(title)}, '${url}')`)
-      return url
-    }
-    return ""
-  } else {
-    return res[0][0].url
-  }
-}
-
 async function getRandomPage(){
   let res = await db.execute(`select page_title from page where page_random >= ${Math.random(1)} and page_namespace = 0 and page_is_redirect = 0 order by page_random limit 1;`)
   if(res[0].length == 0){
@@ -104,29 +81,5 @@ async function getRandomPage(){
   }
   return res[0][0].page_title.toString()
 }
-
-async function searchByTitle(query){
-  return await db.execute(`select page_title from page where page_title like '${query}%' and page_namespace = 0 and page_is_redirect = 0 limit 100;`)
-}
-
-// router.get('/:word', function(req, res, next) {
-//   res.sendFile(path.join(__dirname, '../public/index.html'));
-// });
-
-router.get('/memberbymember/:word', async function(req, res){
-  res.send(await memberByMember(req.params.word))
-});
-
-router.get('/getimage/:word', async function(req, res){
-  res.send(await getImage(req.params.word))
-})
-
-router.get('/getrandompage/', async function(req, res){
-  res.send(await getRandomPage())
-})
-
-router.get('/searchbytitle/:word', async function(req, res){
-  res.send(await searchByTitle(req.params.word))
-})
 
 module.exports = router;
