@@ -5,7 +5,7 @@ let catToPage
 /*
   受け取るオブジェクト
     {
-      cmd: 'init' | 'getPages',
+      cmd: 'init' | 'memberByMember',
       arg: String
     }
 

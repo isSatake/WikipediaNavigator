@@ -6,22 +6,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-
-var debug = require('debug')('server');
+var debug = require('debug')('server'); //?
 
 var app = express();
 
-require('dotenv').config()
+require('dotenv').config() //?
 
 app.set('port', process.env.PORT || '3000');
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
+app.use(logger('dev')); //?
+app.use(bodyParser.json()); //?
+app.use(bodyParser.urlencoded({ extended: false })); //?
+app.use(cookieParser()); //?
+app.use(express.static('public'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -31,18 +27,6 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.send(err.message);
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.send(err.message);
@@ -86,6 +70,7 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
+//なにこれ
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
