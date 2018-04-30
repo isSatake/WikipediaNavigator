@@ -10,7 +10,7 @@ require('dotenv').config()
 
 app.set('port', process.env.PORT || '3000');
 app.use(logger('dev'));
-app.use(express.static('public', { maxAge: '3m' }));
+app.use(express.static('public'));
 app.use(favicon('public/favicon.ico'))
 
 // catch 404 and forward to error handler

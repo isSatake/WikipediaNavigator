@@ -1,10 +1,11 @@
 const work = require("webworkify")
+const url = location.hostname == "localhost" ? "http://localhost:3000" : "http://wn.pivotpedia.com"
 let pageToCatWorker, catToPageWorker
 
 const requestInitPageToCat = new Promise((resolve, reject) => {
     console.log("wikipedia:requestInitPageToCat")
     pageToCatWorker = work(require("./pageToCatWorker.js"))
-    pageToCatWorker.postMessage({ cmd: 'init' })
+    pageToCatWorker.postMessage({ cmd: 'init', arg: url })
     pageToCatWorker.onmessage = (e) => {
       if(e.data.cmd != 'init') {
         return
@@ -16,7 +17,7 @@ const requestInitPageToCat = new Promise((resolve, reject) => {
 const requestInitCatToPage = new Promise((resolve, reject) => {
     console.log("wikipedia:requestInitCatToPage")
     catToPageWorker = work(require("./catToPageWorker.js"))
-    catToPageWorker.postMessage({ cmd: 'init' })
+    catToPageWorker.postMessage({ cmd: 'init', arg: url })
     catToPageWorker.onmessage = (e) => {
       if(e.data.cmd != 'init') {
         return
