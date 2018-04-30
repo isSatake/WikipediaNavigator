@@ -1,23 +1,17 @@
 var http = require('http');
 var express = require('express');
-var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
-var debug = require('debug')('server'); //?
+var debug = require('debug')('server');
 
 var app = express();
 
-require('dotenv').config() //?
+require('dotenv').config()
 
 app.set('port', process.env.PORT || '3000');
-app.use(logger('dev')); //?
-app.use(bodyParser.json()); //?
-app.use(bodyParser.urlencoded({ extended: false })); //?
-app.use(cookieParser()); //?
-app.use(express.static('public'));
+app.use(logger('dev'));
+app.use(express.static('public', { maxAge: '3m' }));
+app.use(favicon('public/favicon.ico'))
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -36,7 +30,7 @@ app.use(function(err, req, res, next) {
 var server = http.createServer(app);
 server.listen(app.get('port'));
 server.on('error', onError);
-server.on('listening', onListening);
+// server.on('listening', onListening);
 
 /**
  * Event listener for HTTP server "error" event.
