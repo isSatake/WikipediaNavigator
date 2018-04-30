@@ -32,20 +32,25 @@ export default class SettingDrawer extends Component {
   }
 
   render = () => {
+    // const menus = [
+    //   <MenuItem
+    //     leftIcon={<StorageIcon />}
+    //     onClick={this.toggleDbDialog}>
+    //     設定
+    //   </MenuItem>
+    // ]
+    const menus = []
+
     return(
       <Drawer
         open={this.state.open}
         docked={false}
         onRequestChange={(open) => this.setState({open})}
-        width={310} >
+        width={330} >
         <AppBar
           title="Wikipedia Navigator"
           onLeftIconButtonClick={this.toggleDrawer} />
-        <MenuItem
-          leftIcon={<StorageIcon />}
-          onClick={this.toggleDbDialog}>
-          設定
-        </MenuItem>
+        {menus}
       </Drawer>
     )
   }
