@@ -23,7 +23,13 @@ module.exports = function(self){
       case 'init':
         console.log("start fetch pageToCat")
         await init(e.data.arg, (progress) => {
-          self.postMessage({ cmd: cmd, progress: progress})
+          self.postMessage({
+            cmd: cmd,
+            progress: {
+              type: "pageToCat",
+              progress: progress
+            }
+          })
         })
         console.log("done fetch pageToCat")
         self.postMessage({ cmd: cmd, res: 'success' })

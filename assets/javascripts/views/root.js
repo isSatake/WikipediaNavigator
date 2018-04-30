@@ -35,8 +35,7 @@ export default class Root extends Component {
       dialogOpen: true,
       wikipediaOpen: false,
       isLoading: false,
-      pageToCatDlProgress: 0,
-      catToPageDlProgress: 0
+      dataDlProgress: 0
     }
 
     this.rootStyle = {
@@ -48,16 +47,11 @@ export default class Root extends Component {
   }
 
   componentDidMount = async () => {
-    console.log('root:Wikipediaデータを初期化中だぞ')
     await initWikipedia((progress) => {
       console.log(progress)
-      if(progress.type == "pageToCat"){
-        this.setState({ pageToCatDlProgress: progress.progress })
-        return
-      }
-      this.setState({ catToPageDlProgress: progress.progress })
+      this.setState({ dataDlProgress: progress })
     })
-    console.log('root:Wikipediaデータの準備ができたぞ')
+    this.setState({ dialogOpen: false })
     this.randomRequest()
     window.addEventListener("keydown", (e) => this.handleKeyDown(e))
   }
@@ -276,16 +270,12 @@ export default class Root extends Component {
         <SettingDrawer
           open={this.state.drawerOpen} />
         <Dialog
-          title="Wikipediaデータを準備中"
+          title="Wikipediaデータをダウンロード中"
           open={this.state.dialogOpen} >
-          pageToCat
           <LinearProgress
             mode="determinate"
-            value={this.state.pageToCatDlProgress} />
-          catToPage
-          <LinearProgress
-            mode="determinate"
-            value={this.state.catToPageDlProgress} />
+            max={210}
+            value={this.state.dataDlProgress} />
         </Dialog>
       </div>
     )

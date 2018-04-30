@@ -14,7 +14,9 @@ const requestInitPageToCat = (onProgress) => {
       if(e.data.progress) {
         onProgress(e.data.progress)
       }
-      resolve()
+      if(e.data.res == "success"){
+        resolve()
+      }
     }
   })
 }
@@ -31,7 +33,9 @@ const requestInitCatToPage = (onProgress) => {
       if(e.data.progress) {
         onProgress(e.data.progress)
       }
-      resolve()
+      if(e.data.res == "success"){
+        resolve()
+      }
     }
   })
 }
@@ -49,9 +53,17 @@ const requestGetCategories = (title) => {
   })
 }
 
-exports.requestInit = async (onProgress) => {
-  await requestInitPageToCat((progress) => onProgress({ type: "pageToCat", progress: progress }))
-  await requestInitCatToPage((progress) => onProgress({ type: "catToPage", progress: progress }))
+exports.requestInit = async(onProgress) => {
+  const combineProgress = (progress) => {
+    console.log(progress)
+    if(progress.type == "catToPage"){
+      onProgress(100 + progress.progress)
+      return
+    }
+    onProgress(progress.progress)
+  }
+  await requestInitPageToCat(combineProgress)
+  await requestInitCatToPage(combineProgress)
 }
 
 exports.requestMemberByMember = (title) => {
