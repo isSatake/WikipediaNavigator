@@ -22,7 +22,9 @@ module.exports = function(self){
     switch(cmd){
       case 'init':
         console.log("start fetch catToPage")
-        await init(e.data.arg)
+        await init(e.data.arg, (progress) => {
+          self.postMessage({ cmd: cmd, progress: progress})
+        })
         console.log("done fetch catToPage")
         self.postMessage({ cmd: cmd, res: 'success' })
         break
@@ -37,8 +39,8 @@ module.exports = function(self){
   })
 }
 
-const init = async (url) => {
-  catToPage = await fetch(`${url}/keycat.json`)
+const init = async (url, onProgress) => {
+  catToPage = await fetch(`${url}/keycat.json`, onProgress)
   return
 }
 

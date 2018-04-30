@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import ReactDOM from "react-dom"
 import autoBind from 'react-autobind'
 import Request from "superagent"
+
 import AppBar from 'material-ui/AppBar'
 import LinearProgress from 'material-ui/LinearProgress'
 import { cyan500 } from "material-ui/styles/colors"
@@ -11,6 +12,8 @@ import MenuIcon from "material-ui/svg-icons/navigation/menu"
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ArrowUp from 'material-ui/svg-icons/hardware/keyboard-arrow-up'
 import ArrowDown from 'material-ui/svg-icons/hardware/keyboard-arrow-down'
+import Dialog from 'material-ui/Dialog'
+
 import Shelf from "./Shelf"
 import Search from './Search'
 import SettingDrawer from './SettingDrawer'
@@ -29,8 +32,10 @@ export default class Root extends Component {
       currentCategoryIndex: 0,
       currentEntryIndex: 0,
       drawerOpen: false,
+      dialogOpen: true,
       wikipediaOpen: false,
-      isLoading: false
+      isLoading: false,
+      dataDlProgress: 0
     }
 
     this.rootStyle = {
@@ -43,7 +48,10 @@ export default class Root extends Component {
 
   componentDidMount = async () => {
     console.log('root:Wikipediaデータを初期化中だぞ')
-    await initWikipedia()
+    await initWikipedia((progress) => {
+      console.log(progress)
+      this.setState({ dataDlProgress: progress.progress })
+    })
     console.log('root:Wikipediaデータの準備ができたぞ')
     this.randomRequest()
     window.addEventListener("keydown", (e) => this.handleKeyDown(e))
@@ -262,6 +270,15 @@ export default class Root extends Component {
         </FloatingActionButton>
         <SettingDrawer
           open={this.state.drawerOpen} />
+        <Dialog
+          title="Wikipediaデータを準備中"
+          open={this.state.dialogOpen} >
+          ダウンロード中|展開中
+          <LinearProgress
+            mode="determinate"
+            max={200}
+            value={this.state.dataDlProgress} />
+        </Dialog>
       </div>
     )
   }

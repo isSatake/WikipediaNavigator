@@ -2,7 +2,8 @@ const work = require("webworkify")
 const url = location.hostname == "localhost" ? "http://localhost:3000" : "http://wn.stkay.com"
 let pageToCatWorker, catToPageWorker
 
-const requestInitPageToCat = new Promise((resolve, reject) => {
+const requestInitPageToCat = (onProgress) => {
+  return new Promise((resolve, reject) => {
     console.log("wikipedia:requestInitPageToCat")
     pageToCatWorker = work(require("./pageToCatWorker.js"))
     pageToCatWorker.postMessage({ cmd: 'init', arg: url })
@@ -10,11 +11,16 @@ const requestInitPageToCat = new Promise((resolve, reject) => {
       if(e.data.cmd != 'init') {
         return
       }
+      if(e.data.progress) {
+        onProgress(e.data.progress)
+      }
       resolve()
     }
   })
+}
 
-const requestInitCatToPage = new Promise((resolve, reject) => {
+const requestInitCatToPage = (onProgress) => {
+  return new Promise((resolve, reject) => {
     console.log("wikipedia:requestInitCatToPage")
     catToPageWorker = work(require("./catToPageWorker.js"))
     catToPageWorker.postMessage({ cmd: 'init', arg: url })
@@ -22,9 +28,13 @@ const requestInitCatToPage = new Promise((resolve, reject) => {
       if(e.data.cmd != 'init') {
         return
       }
+      if(e.data.progress) {
+        onProgress(e.data.progress)
+      }
       resolve()
     }
   })
+}
 
 const requestGetCategories = (title) => {
   console.log(`wikipedia:requestGetCategories:${title}`)
@@ -39,8 +49,9 @@ const requestGetCategories = (title) => {
   })
 }
 
-exports.requestInit = () => {
-  return Promise.all([requestInitPageToCat, requestInitCatToPage])
+exports.requestInit = async (onProgress) => {
+  await requestInitPageToCat((progress) => onProgress({ type: "pageToCat", progress: progress }))
+  await requestInitCatToPage((progress) => onProgress({ type: "catToPage", progress: progress }))
 }
 
 exports.requestMemberByMember = (title) => {
