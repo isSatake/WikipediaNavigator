@@ -35,7 +35,8 @@ export default class Root extends Component {
       dialogOpen: true,
       wikipediaOpen: false,
       isLoading: false,
-      dataDlProgress: 0
+      pageToCatDlProgress: 0,
+      catToPageDlProgress: 0
     }
 
     this.rootStyle = {
@@ -50,7 +51,11 @@ export default class Root extends Component {
     console.log('root:Wikipediaデータを初期化中だぞ')
     await initWikipedia((progress) => {
       console.log(progress)
-      this.setState({ dataDlProgress: progress.progress })
+      if(progress.type == "pageToCat"){
+        this.setState({ pageToCatDlProgress: progress.progress })
+        return
+      }
+      this.setState({ catToPageDlProgress: progress.progress })
     })
     console.log('root:Wikipediaデータの準備ができたぞ')
     this.randomRequest()
@@ -273,11 +278,14 @@ export default class Root extends Component {
         <Dialog
           title="Wikipediaデータを準備中"
           open={this.state.dialogOpen} >
-          ダウンロード中|展開中
+          pageToCat
           <LinearProgress
             mode="determinate"
-            max={200}
-            value={this.state.dataDlProgress} />
+            value={this.state.pageToCatDlProgress} />
+          catToPage
+          <LinearProgress
+            mode="determinate"
+            value={this.state.catToPageDlProgress} />
         </Dialog>
       </div>
     )
