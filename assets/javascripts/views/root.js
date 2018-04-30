@@ -13,6 +13,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ArrowUp from 'material-ui/svg-icons/hardware/keyboard-arrow-up'
 import ArrowDown from 'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import Dialog from 'material-ui/Dialog'
+import FlatButton from "material-ui/FlatButton"
 
 import Shelf from "./Shelf"
 import Search from './Search'
@@ -237,10 +238,17 @@ export default class Root extends Component {
       />
     )
 
-    const search = (
-      <Search
-        searchByTitle={searchByTitle}
-        requestQuery={this.requestQuery}/>
+    const appBarChildren = (
+      <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+        <Search
+          searchByTitle={searchByTitle}
+          requestQuery={this.requestQuery}/>
+        <FlatButton
+          style={{ top: 15 }}
+          labelStyle={{ fontSize: 17, color: "white" }}
+          label={"おまかせ"}
+          onClick={this.randomRequest}/>
+      </div>
     )
 
     const progress = this.state.isLoading ? <LinearProgress mode="indeterminate" style={{ position: "fixed", top: "64", left: "-1", width: "101%", backgroundColor: "#FFF" }}/> : ""
@@ -253,7 +261,7 @@ export default class Root extends Component {
           titleStyle={{ cursor: "pointer", flex: "0 1 20%", overflow: "" }}
           onLeftIconButtonClick={this.toggleDrawer}
           onTitleClick={this.randomRequest}
-          children={search} />
+          children={appBarChildren} />
         {progress}
         <div style={{ margin: "0 auto", paddingTop: 10, display: "flex" }}>
           {this.state.columns}

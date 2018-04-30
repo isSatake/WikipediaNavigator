@@ -2,8 +2,8 @@ import { cyan500 } from "material-ui/styles/colors"
 
 export default {
   container: {
-    flex: "1 1",
-    padding: "11 10 0 430"
+    width: 215,
+    paddingTop: 13
   },
   input: {
     width: "100%",
