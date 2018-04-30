@@ -255,7 +255,7 @@ export default class Root extends Component {
           onTitleClick={this.randomRequest}
           children={search} />
         {progress}
-        <div style={{ width: 1155, padding: "10 0 0 20", display: "flex" }}>
+        <div style={{ margin: "0 auto", paddingTop: 10, display: "flex" }}>
           {this.state.columns}
         </div>
         <div style={{ position: "fixed", height: "100%", width: "100%", left: 0, top: this.state.wikipediaOpen ? 65 : "57%", transition: "all 300ms 0s ease", boxShadow: "0px 10px 10px 10px grey"}}>
