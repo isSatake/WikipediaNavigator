@@ -1,5 +1,5 @@
 const work = require("webworkify")
-const url = location.hostname == "localhost" ? "http://localhost:3000" : "http://wn.pivotpedia.com"
+const url = location.hostname == "localhost" ? "http://localhost:3000" : "http://wn.stkay.com"
 let pageToCatWorker, catToPageWorker
 
 const requestInitPageToCat = new Promise((resolve, reject) => {
