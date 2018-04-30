@@ -32,7 +32,7 @@ export default class Root extends Component {
       currentCategoryIndex: 0,
       currentEntryIndex: 0,
       drawerOpen: false,
-      dialogOpen: false,
+      dialogOpen: true,
       wikipediaOpen: false,
       isLoading: false,
       dataDlProgress: 0
@@ -47,13 +47,12 @@ export default class Root extends Component {
   }
 
   componentDidMount = async () => {
-    // await initWikipedia((progress) => {
-    //   console.log(progress)
-    //   this.setState({ dataDlProgress: progress })
-    // })
-    // this.setState({ dialogOpen: false })
-    // this.randomRequest()
-    // window.addEventListener("keydown", (e) => this.handleKeyDown(e))
+    await initWikipedia((progress) => {
+      this.setState({ dataDlProgress: progress })
+    })
+    this.setState({ dialogOpen: false })
+    this.randomRequest()
+    window.addEventListener("keydown", (e) => this.handleKeyDown(e))
   }
 
   randomRequest = async () => {
