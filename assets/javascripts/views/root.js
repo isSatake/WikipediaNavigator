@@ -81,26 +81,36 @@ export default class Root extends Component {
       isLoading: true
     })
 
-    const res = await memberByMember(query)
-    console.log(res)
+    let categoryIndex
+    let entryIndex
+    let entryClusters = await memberByMember(query)
 
-    //直前にフォーカスしていたカテゴリにピボットする
-    const index = this.state.query == "" ? Math.floor(res.length / 2) : (() => {
-      for(let i = 0; i < res.length; i++){
-        if(res[i].category == this.state.entryClusters[this.state.currentCategoryIndex].category){
-          return i
+    if(entryClusters.length == 0){
+      //サブカテゴリのようにカテゴリが登録されていないページの場合は直前に表示していたカテゴリをそのまま使う
+      entryClusters = [this.state.entryClusters[this.state.currentCategoryIndex]]
+      categoryIndex = 0
+      entryIndex = this.state.currentEntryIndex
+    } else {
+      //直前にフォーカスしていたカテゴリにピボットする
+      categoryIndex = this.state.query == "" ? Math.floor(entryClusters.length / 2) : (() => {
+        for(let i = 0; i < entryClusters.length; i++){
+          if(entryClusters[i].category == this.state.entryClusters[this.state.currentCategoryIndex].category){
+            return i
+          }
         }
-      }
-      return 0
-    })()
+        return 0
+      })()
+      entryIndex = entryClusters[categoryIndex].entries.indexOf(query)
+    }
 
-    console.log(index)
+    console.log(entryClusters)
+    console.log(`catIndex: ${categoryIndex} entIndex: ${entryIndex}`)
 
     this.setState({
-      currentCategoryIndex: index,
-      currentEntryIndex: res[index].entries.indexOf(query),
+      currentCategoryIndex: categoryIndex,
+      currentEntryIndex: entryIndex,
       query: query,
-      entryClusters: res,
+      entryClusters: entryClusters,
       isLoading: false
     }, () => {
       this.refreshColumns()

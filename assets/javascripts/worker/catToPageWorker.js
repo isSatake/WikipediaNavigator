@@ -35,7 +35,7 @@ module.exports = function(self){
         self.postMessage({ cmd: cmd, res: 'success' })
         break
       case 'memberByMember':
-        console.log(e.data.arg)
+        console.log(`catToPageWorker:onMemberByMember:${e.data.arg}`)
         self.postMessage({ cmd: cmd, res: memberByMember(e.data.arg) })
         break
       default:
@@ -50,4 +50,9 @@ const init = async (url, onProgress) => {
   return
 }
 
-const memberByMember = categories => categories.map(cat => ({category: cat, entries: catToPage[cat]}))
+const memberByMember = (categories) => {
+  if(categories == undefined){
+    return []
+  }
+  return categories.map(cat => ({category: cat, entries: catToPage[cat]}))
+}

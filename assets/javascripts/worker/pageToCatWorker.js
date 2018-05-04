@@ -1,5 +1,6 @@
 import { fetch } from "./fetchJSON"
 
+const excludedCategories = require('./excludedCategories')
 let pageToCat, keys
 
 /*
@@ -35,6 +36,7 @@ module.exports = function(self){
         self.postMessage({ cmd: cmd, res: 'success' })
         break
       case 'getCategories':
+        console.log(`pageToCatWorker:onGetCategories:${e.data.arg}`)
         self.postMessage({ cmd: cmd, res: getCategories(e.data.arg) })
         break
       case 'getRandomPage':
@@ -56,8 +58,29 @@ const init = async (url, onProgress) => {
   return
 }
 
-const getCategories = pageTitle => pageToCat[pageTitle]
+const isNotCategory = (title) => {
+  for(let filter of excludedCategories){
+    if(title.indexOf(filter) >= 0){
+      return true
+    }
+  }
+}
 
-const getRandomPage = () => keys[Math.floor(Math.random() * (keys.length + 1))]
+const getCategories = (pageTitle) => {
+  const categories = pageToCat[pageTitle]
+  console.log(`pageToCatWorker:categories:${categories}`)
+  if(categories == undefined){
+    return []
+  }
+  return categories.filter(category => !isNotCategory(category))
+}
+const getRandomPage = () => {
+  console.log(`pageToCatWorker:getRandomPage`)
+  const title = keys[Math.floor(Math.random() * (keys.length + 1))]
+  if(getCategories(title).length == 0){
+    return getRandomPage()
+  }
+  return title
+}
 
 const searchByTitle = queryTitle => keys.filter(title => title.indexOf(queryTitle) === 0)
