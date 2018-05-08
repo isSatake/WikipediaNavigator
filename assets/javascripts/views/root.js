@@ -45,6 +45,8 @@ export default class Root extends Component {
       font: "14px 'Lucida Grande', Helvetica, Arial, sans-serif"
     }
 
+    this.previewTimer
+
   }
 
   componentDidMount = async () => {
@@ -115,6 +117,10 @@ export default class Root extends Component {
     }, () => {
       this.refreshColumns()
     })
+
+    this.previewTimer = setTimeout(() => {
+      this.toggleWikipedia(true)
+    }, 3000)
   }
 
   currentEntries = () => {
@@ -181,6 +187,9 @@ export default class Root extends Component {
     const columns = []
     console.log(offset)
 
+    clearTimeout(this.previewTimer)
+    this.toggleWikipedia(false)
+
     if(this.state.entryClusters.length == 0) {
       return
     }
@@ -229,9 +238,9 @@ export default class Root extends Component {
     })
   }
 
-  toggleWikipedia = () => {
+  toggleWikipedia = (isOpen) => {
     this.setState({
-      wikipediaOpen: !this.state.wikipediaOpen
+      wikipediaOpen: isOpen === undefined ? !this.state.wikipediaOpen : isOpen
     })
   }
 
