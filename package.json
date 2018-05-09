@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "postinstall": "npm run build:client & npm run build:server",
-    "start": "node app.js",
+    "start": "node dest/app.js",
     "start:dev": "npm run watch:server & npm run watch:client",
-    "build:server": "babel src/server/app.js --out-file ./app.js",
+    "build:server": "babel src/server --out-dir dest",
     "build:client": "browserify src/client/app.js --transform babelify --outfile public/main.js",
     "watch:server": "babel-watch src/server/app.js",
     "watch:client": "watchify --verbose --debug src/client/app.js --transform babelify --outfile public/main.js"
