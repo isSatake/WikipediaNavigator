@@ -5,9 +5,18 @@ import * as cheerio from "cheerio"
 const router = Router()
 
 router.get('/image/:title', async (req, res) => {
+  console.log('img:title ' + req.params.title)
   const $ = await htmlParser(req.params.title)
+  if(!$){
+    res.status(404).end()
+    return
+  }
   const thumbnail = $('img.thumbimage').attr('src')
   const img = thumbnail === undefined ? $('img').attr('src') : thumbnail
+  if(!img){
+    res.status(404).end()
+    return
+  }
   res.send(`https:${img}`).status(200).end()
 })
 
@@ -18,7 +27,10 @@ router.get('/link/:title', async (req, res) => {
 })
 
 const htmlParser = async (pageTitle) => {
-  const res = await axios.get(`https://ja.wikipedia.org/wiki/${encodeURI(pageTitle)}`)
+  const res = await axios.get(`https://ja.wikipedia.org/wiki/${encodeURI(pageTitle)}`).catch(() => null)
+  if(!res){
+    return null
+  }
   return cheerio.load(`${res.data}`)
 }
 

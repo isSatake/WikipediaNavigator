@@ -1,14 +1,14 @@
-import React, { Component } from "react"
-import Request from "superagent"
+import React, {Component} from "react"
+import * as axios from "axios"
 
-const ENTRY_HEIGHT = 40
+const ENTRY_SIZE = 40
 
 export default class Entry extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {
-      img: "./images/noimg.png"
+      img: ""
     }
 
     this.style = {
@@ -16,7 +16,7 @@ export default class Entry extends Component {
       whiteSpace: "nowrap",
       overflow: "hidden",
       width: "100%",
-      height: ENTRY_HEIGHT,
+      height: ENTRY_SIZE,
       marginBottom: 20,
       paddingLeft: 10,
       borderRadius: "20px",
@@ -25,48 +25,66 @@ export default class Entry extends Component {
       boxSizing: "border-box"
     }
 
-    if(this.props.empty){
+    if (this.props.empty) {
       this.style.background = "#FFF"
-    }else if(this.props.isFocus){
+    } else if (this.props.isFocus) {
       this.style.background = "#AAA"
       this.style.fontWeight = "bold"
-    }else{
+    } else {
       this.style.background = "#EEE"
     }
 
     this.imgStyle = {
-      width: ENTRY_HEIGHT,
-      height: ENTRY_HEIGHT,
+      width: ENTRY_SIZE,
+      height: ENTRY_SIZE,
       objectFit: "cover",
       marginRight: "10px",
       borderRadius: "20px"
     }
+
+    //this.setImage()
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  componentWillReceiveProps = async (nextProps) => {
     console.log(nextProps)
-    if(this.props.title == nextProps.title){
+    if (this.props.title === nextProps.title) {
       return
     }
-    this.setState({img: "./images/noimg.png"})
+
+    //this.setImage()
+  }
+
+  setImage = async () => {
+    this.setState({img: ""})
+    console.log((`get /image/${this.props.title}`))
+    const res = await axios.get(`/image/${this.props.title}`).catch(() => null)
+    this.setState({img: !res ? "" : res.data}, () => {
+      console.log(`setImage: ${this.state.img}`)
+    })
   }
 
   render = () => {
     console.log("render")
 
-    if(this.props.empty){
-      return(
-        <div style={this.style}></div>
+    if (this.props.empty) {
+      return (
+          <div style={this.style}/>
       )
     }
 
     const img = ""
 
-    return(
-      <div style={this.style}>
-        {img}
-        <div>{this.props.title}</div>
-      </div>
+    // const img = (
+    //     <img
+    //         src={this.state.img}
+    //         style={this.imgStyle}/>
+    // )
+
+    return (
+        <div style={this.style}>
+          {img}
+          <div>{this.props.title}</div>
+        </div>
     )
   }
 }
