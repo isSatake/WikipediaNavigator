@@ -1,14 +1,8 @@
 import React, { Component } from "react"
 import ReactDOM from "react-dom"
-import autoBind from 'react-autobind'
-import Request from "superagent"
 
 import AppBar from 'material-ui/AppBar'
 import LinearProgress from 'material-ui/LinearProgress'
-import { cyan500 } from "material-ui/styles/colors"
-import RaisedButton from 'material-ui/RaisedButton'
-import IconButton from "material-ui/IconButton"
-import MenuIcon from "material-ui/svg-icons/navigation/menu"
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ArrowUp from 'material-ui/svg-icons/hardware/keyboard-arrow-up'
 import ArrowDown from 'material-ui/svg-icons/hardware/keyboard-arrow-down'
@@ -45,7 +39,7 @@ export default class Root extends Component {
       font: "14px 'Lucida Grande', Helvetica, Arial, sans-serif"
     }
 
-    this.previewTimer
+    this.previewTimer = null
 
   }
 
@@ -69,7 +63,7 @@ export default class Root extends Component {
   requestQuery = async (isJump = false, query = this.currentEntries()[this.state.currentEntryIndex]) => {
     console.log('submit query')
     console.log(query)
-    if(!query || query.length == 0 || query == this.state.query){
+    if(!query || query.length === 0 || query === this.state.query){
       return
     }
 
@@ -87,16 +81,16 @@ export default class Root extends Component {
     let entryIndex
     let entryClusters = await memberByMember(query)
 
-    if(entryClusters.length == 0){
+    if(entryClusters.length === 0){
       //サブカテゴリのようにカテゴリが登録されていないページの場合は直前に表示していたカテゴリをそのまま使う
       entryClusters = [this.state.entryClusters[this.state.currentCategoryIndex]]
       categoryIndex = 0
       entryIndex = this.state.currentEntryIndex
     } else {
       //直前にフォーカスしていたカテゴリにピボットする
-      categoryIndex = this.state.query == "" ? Math.floor(entryClusters.length / 2) : (() => {
+      categoryIndex = this.state.query === "" ? Math.floor(entryClusters.length / 2) : (() => {
         for(let i = 0; i < entryClusters.length; i++){
-          if(entryClusters[i].category == this.state.entryClusters[this.state.currentCategoryIndex].category){
+          if(entryClusters[i].category === this.state.entryClusters[this.state.currentCategoryIndex].category){
             return i
           }
         }
@@ -132,7 +126,7 @@ export default class Root extends Component {
   }
 
   handleKeyDown = (e) => {
-    if(e.keyCode != 37 && e.keyCode != 38 && e.keyCode != 39 && e.keyCode != 40 && e.keyCode != 13) {
+    if(e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40 && e.keyCode !== 13) {
       return
     }
     e.preventDefault()
@@ -189,12 +183,12 @@ export default class Root extends Component {
 
     this.toggleWikipedia(false)
 
-    if(this.state.entryClusters.length == 0) {
+    if(this.state.entryClusters.length === 0) {
       return
     }
 
     for(let i = 0; i < COLUMNS_SIZE; i++){
-      const isFocus = i == offset
+      const isFocus = i === offset
       const cluster = this.state.entryClusters[this.state.currentCategoryIndex - offset + i]
 
       if(!cluster){

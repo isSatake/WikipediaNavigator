@@ -21,40 +21,6 @@ input {
   width: 100%;
 }
 
-.clear-button,
-.submit-button {
-  background: transparent;
-  background-position: center center;
-  background-repeat: no-repeat;
-  border: 0;
-  cursor: pointer;
-  font-size: 0;
-  outline: 0;
-  padding: 0;
-  width: 25px;
-}
-
-.clear-button {
-  background-image: url(./icons/clear.svg);
-  background-size: 30%;
-  right: 0;
-  width: 40px;
-}
-
-.submit-button {
-  background-color: #e5e5e5;
-  background-image: url(./icons/search.svg);
-  background-size: 35%;
-  border: 1px solid #ddd;
-  padding: 0 20px;
-  opacity: .8;
-  width: 40px;
-}
-
-.submit-button:hover {
-  opacity: 1;
-}
-
 .suggestions {
   border: 1px solid #ccc;
   list-style: none;
