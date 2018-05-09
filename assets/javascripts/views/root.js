@@ -289,7 +289,7 @@ export default class Root extends Component {
           {wikipedia}
         </div>
         <FloatingActionButton
-        onClick={this.toggleWikipedia}
+        onClick={() => {this.toggleWikipedia()}}
         style={{ right: 20, bottom: 20, position: "fixed", zIndex: 10 }}>
         {arrow}
         </FloatingActionButton>
