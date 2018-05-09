@@ -187,7 +187,6 @@ export default class Root extends Component {
     const columns = []
     console.log(offset)
 
-    clearTimeout(this.previewTimer)
     this.toggleWikipedia(false)
 
     if(this.state.entryClusters.length == 0) {
@@ -239,6 +238,7 @@ export default class Root extends Component {
   }
 
   toggleWikipedia = (isOpen) => {
+    clearTimeout(this.previewTimer)
     this.setState({
       wikipediaOpen: isOpen === undefined ? !this.state.wikipediaOpen : isOpen
     })
