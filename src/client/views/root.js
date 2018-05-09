@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, {Component} from "react"
 import ReactDOM from "react-dom"
 
 import AppBar from 'material-ui/AppBar'
@@ -12,12 +12,12 @@ import FlatButton from "material-ui/FlatButton"
 import Shelf from "./Shelf"
 import Search from './Search'
 import SettingDrawer from './SettingDrawer'
-import { initWikipedia, memberByMember, getRandomPage, searchByTitle } from "../wikipedia"
+import {initWikipedia, memberByMember, getRandomPage, searchByTitle} from "../wikipedia"
 
 const COLUMNS_SIZE = 5
 
 export default class Root extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -45,9 +45,9 @@ export default class Root extends Component {
 
   componentDidMount = async () => {
     await initWikipedia((progress) => {
-      this.setState({ dataDlProgress: progress })
+      this.setState({dataDlProgress: progress})
     })
-    this.setState({ dialogOpen: false })
+    this.setState({dialogOpen: false})
     this.randomRequest()
     window.addEventListener("keydown", (e) => this.handleKeyDown(e))
   }
@@ -63,11 +63,11 @@ export default class Root extends Component {
   requestQuery = async (isJump = false, query = this.currentEntries()[this.state.currentEntryIndex]) => {
     console.log('submit query')
     console.log(query)
-    if(!query || query.length === 0 || query === this.state.query){
+    if (!query || query.length === 0 || query === this.state.query) {
       return
     }
 
-    if(isJump){
+    if (isJump) {
       this.setState({
         query: ""
       })
@@ -81,7 +81,7 @@ export default class Root extends Component {
     let entryIndex
     let entryClusters = await memberByMember(query)
 
-    if(entryClusters.length === 0){
+    if (entryClusters.length === 0) {
       //サブカテゴリのようにカテゴリが登録されていないページの場合は直前に表示していたカテゴリをそのまま使う
       entryClusters = [this.state.entryClusters[this.state.currentCategoryIndex]]
       categoryIndex = 0
@@ -89,8 +89,8 @@ export default class Root extends Component {
     } else {
       //直前にフォーカスしていたカテゴリにピボットする
       categoryIndex = this.state.query === "" ? Math.floor(entryClusters.length / 2) : (() => {
-        for(let i = 0; i < entryClusters.length; i++){
-          if(entryClusters[i].category === this.state.entryClusters[this.state.currentCategoryIndex].category){
+        for (let i = 0; i < entryClusters.length; i++) {
+          if (entryClusters[i].category === this.state.entryClusters[this.state.currentCategoryIndex].category) {
             return i
           }
         }
@@ -126,7 +126,7 @@ export default class Root extends Component {
   }
 
   handleKeyDown = (e) => {
-    if(e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40 && e.keyCode !== 13) {
+    if (e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40 && e.keyCode !== 13) {
       return
     }
     e.preventDefault()
@@ -183,20 +183,20 @@ export default class Root extends Component {
 
     this.toggleWikipedia(false)
 
-    if(this.state.entryClusters.length === 0) {
+    if (this.state.entryClusters.length === 0) {
       return
     }
 
-    for(let i = 0; i < COLUMNS_SIZE; i++){
+    for (let i = 0; i < COLUMNS_SIZE; i++) {
       const isFocus = i === offset
       const cluster = this.state.entryClusters[this.state.currentCategoryIndex - offset + i]
 
-      if(!cluster){
+      if (!cluster) {
         columns.push(
-          <Shelf
-            empty={true}
-            rowSize={COLUMNS_SIZE}
-          />
+            <Shelf
+                empty={true}
+                rowSize={COLUMNS_SIZE}
+            />
         )
         continue
       }
@@ -205,15 +205,15 @@ export default class Root extends Component {
       const index = isFocus ? this.state.currentEntryIndex : cluster.entries.indexOf(this.state.query)
 
       columns.push(
-        <Shelf
-          debugindex={this.state.currentCategoryIndex - offset + i}
-          key={`shelf-${i}`}
-          rowSize={COLUMNS_SIZE}
-          category={cluster ? cluster.category : ""}
-          entries={cluster ? cluster.entries : ""}
-          isFocus={isFocus}
-          index={index}
-        />
+          <Shelf
+              debugindex={this.state.currentCategoryIndex - offset + i}
+              key={`shelf-${i}`}
+              rowSize={COLUMNS_SIZE}
+              category={cluster ? cluster.category : ""}
+              entries={cluster ? cluster.entries : ""}
+              isFocus={isFocus}
+              index={index}
+          />
       )
     }
     console.log('columns updated')
@@ -241,68 +241,84 @@ export default class Root extends Component {
   render = () => {
     console.log("render")
     const wikipedia = (
-      <iframe
-        src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
-        style={{
-          width: "100%",
-          height: "90%",
-          border: "none"
-        }}
-      />
+        <iframe
+            src={`https://ja.m.wikipedia.org/wiki/${this.state.query}`}
+            style={{
+              width: "100%",
+              height: "90%",
+              border: "none"
+            }}
+        />
     )
 
     const appBarChildren = (
-      <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
-        <Search
-          searchByTitle={searchByTitle}
-          requestQuery={this.requestQuery}/>
-        <FlatButton
-          style={{ top: 15 }}
-          labelStyle={{ fontSize: 17, color: "white" }}
-          label={"おまかせ"}
-          onClick={this.randomRequest}/>
-      </div>
+        <div style={{display: "flex", justifyContent: "flex-end", width: "100%"}}>
+          <Search
+              searchByTitle={searchByTitle}
+              requestQuery={this.requestQuery}/>
+          <FlatButton
+              style={{top: 15}}
+              labelStyle={{fontSize: 17, color: "white"}}
+              label={"おまかせ"}
+              onClick={this.randomRequest}/>
+        </div>
     )
 
-    const progress = this.state.isLoading ? <LinearProgress mode="indeterminate" style={{ position: "fixed", top: "64", left: "-1", width: "101%", backgroundColor: "#FFF" }}/> : ""
+    const progress = this.state.isLoading ? <LinearProgress mode="indeterminate" style={{
+      position: "fixed",
+      top: "64",
+      left: "-1",
+      width: "101%",
+      backgroundColor: "#FFF"
+    }}/> : ""
     const arrow = this.state.wikipediaOpen ? <ArrowDown/> : <ArrowUp/>
 
-    return(
-      <div style={this.rootStyle}>
-        <AppBar
-          title="Wikipedia Navigator"
-          titleStyle={{ cursor: "pointer", flex: "0 1 20%", overflow: "" }}
-          onLeftIconButtonClick={this.toggleDrawer}
-          onTitleClick={this.randomRequest}
-          children={appBarChildren} />
-        {progress}
-        <div style={{ margin: "0 auto", paddingTop: 10, display: "flex" }}>
-          {this.state.columns}
+    return (
+        <div style={this.rootStyle}>
+          <AppBar
+              title="Wikipedia Navigator"
+              titleStyle={{cursor: "pointer", flex: "0 1 20%", overflow: ""}}
+              onLeftIconButtonClick={this.toggleDrawer}
+              onTitleClick={this.randomRequest}
+              children={appBarChildren}/>
+          {progress}
+          <div style={{margin: "0 auto", paddingTop: 10, display: "flex"}}>
+            {this.state.columns}
+          </div>
+          <div style={{
+            position: "fixed",
+            height: "100%",
+            width: "100%",
+            left: 0,
+            top: this.state.wikipediaOpen ? 65 : "57%",
+            transition: "all 300ms 0s ease",
+            boxShadow: "0px 10px 10px 10px grey"
+          }}>
+            {wikipedia}
+          </div>
+          <FloatingActionButton
+              onClick={() => {
+                this.toggleWikipedia()
+              }}
+              style={{right: 20, bottom: 20, position: "fixed", zIndex: 10}}>
+            {arrow}
+          </FloatingActionButton>
+          <SettingDrawer
+              open={this.state.drawerOpen}/>
+          <Dialog
+              title="Wikipediaデータをダウンロード中"
+              open={this.state.dialogOpen}>
+            <LinearProgress
+                mode="determinate"
+                max={210}
+                value={this.state.dataDlProgress}/>
+          </Dialog>
         </div>
-        <div style={{ position: "fixed", height: "100%", width: "100%", left: 0, top: this.state.wikipediaOpen ? 65 : "57%", transition: "all 300ms 0s ease", boxShadow: "0px 10px 10px 10px grey"}}>
-          {wikipedia}
-        </div>
-        <FloatingActionButton
-        onClick={() => {this.toggleWikipedia()}}
-        style={{ right: 20, bottom: 20, position: "fixed", zIndex: 10 }}>
-        {arrow}
-        </FloatingActionButton>
-        <SettingDrawer
-          open={this.state.drawerOpen} />
-        <Dialog
-          title="Wikipediaデータをダウンロード中"
-          open={this.state.dialogOpen} >
-          <LinearProgress
-            mode="determinate"
-            max={210}
-            value={this.state.dataDlProgress} />
-        </Dialog>
-      </div>
     )
   }
 }
 
 
 window.onload = () => {
-  ReactDOM.render(<Root />, document.getElementById("container"))
+  ReactDOM.render(<Root/>, document.getElementById("container"))
 }
