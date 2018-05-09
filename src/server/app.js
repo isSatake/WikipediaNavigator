@@ -4,6 +4,7 @@ import favicon from "serve-favicon";
 import logger from "morgan";
 import debug0 from "debug";
 import {config} from "dotenv";
+import routes from "./routes/index"
 
 const debug = debug0('server')
 
@@ -15,6 +16,7 @@ app.set('port', process.env.PORT || '3000')
 app.use(logger('dev'))
 app.use(express.static('public'))
 app.use(favicon('public/favicon.ico'))
+app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
