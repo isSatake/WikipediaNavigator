@@ -48,7 +48,15 @@ export default class Root extends Component {
       this.setState({dataDlProgress: progress})
     })
     this.setState({dialogOpen: false})
-    this.randomRequest()
+
+    const queryFromUrl = decodeURIComponent(location.pathname.replace("/", ""))
+
+    if(queryFromUrl !== ""){
+      this.requestQuery(false, queryFromUrl)
+    }else {
+      this.randomRequest()
+    }
+
     window.addEventListener("keydown", (e) => this.handleKeyDown(e))
   }
 

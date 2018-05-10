@@ -1,8 +1,13 @@
 import {Router} from "express"
 import * as axios from "axios"
 import * as cheerio from "cheerio"
+import path from "path";
 
 const router = Router()
+
+router.get('/:word', function(req, res) {
+  res.sendFile(path.join(__dirname, '../../../public/index.html'));
+});
 
 router.get('/image/:title', async (req, res) => {
   console.log('img:title ' + req.params.title)
