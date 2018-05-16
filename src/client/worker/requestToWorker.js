@@ -53,6 +53,19 @@ const requestGetCategories = (title) => {
   })
 }
 
+const requestGetPageList = () => {
+  console.log(`wikipedia:requestGetPageList`)
+  return new Promise((resolve, reject) => {
+    pageToCatWorker.postMessage({ cmd: 'getPageList' })
+    pageToCatWorker.onmessage = (e) => {
+      if(e.data.cmd != 'getPageList'){
+        return
+      }
+      resolve(e.data.res)
+    }
+  })
+}
+
 exports.requestInit = async(onProgress) => {
   const combineProgress = (progress) => {
     console.log(progress)
@@ -70,11 +83,13 @@ exports.requestMemberByMember = (title) => {
   console.log(`wikipedia:requestMemberByMember:${title}`)
   return new Promise(async (resolve, reject) => {
     catToPageWorker.postMessage({ cmd: 'memberByMember', arg: await requestGetCategories(title) })
-    catToPageWorker.onmessage = (e) => {
+    catToPageWorker.onmessage = async (e) => {
       if(e.data.cmd != 'memberByMember'){
         return
       }
-      resolve(e.data.res)
+      const arr = e.data.res
+      arr.push({ category: 'ページリスト', entries: await requestGetPageList() })
+      resolve(arr)
     }
   })
 }

@@ -39,6 +39,8 @@ module.exports = function(self){
         console.log(`pageToCatWorker:onGetCategories:${e.data.arg}`)
         self.postMessage({ cmd: cmd, res: getCategories(e.data.arg) })
         break
+      case 'getPageList':
+        self.postMessage({ cmd: cmd, res: keys })
       case 'getRandomPage':
         self.postMessage({ cmd: cmd, res: getRandomPage() })
         break
